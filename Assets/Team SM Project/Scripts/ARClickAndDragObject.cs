@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.EventSystems;
 
 public class ARClickAndDragObject : MonoBehaviour
 {
@@ -54,68 +55,70 @@ public class ARClickAndDragObject : MonoBehaviour
         selectedObject = objectToSelect;
         if (selectedObject != null)
         {
-            //onTouchHold = true;
             selectedObject.GetComponent<Renderer>().material.color = Color.red;
-            selectedObjectDisplay.text = "Selected: " + selectedObject.transform.gameObject.name;
+            selectedObjectDisplay.text = "Selected: " + selectedObject.name;
         }
     }
-
     private void DeselectObject()
     {
-        selectedObject = null;
-        selectedObject.GetComponent<Renderer>().material.color = Color.white;
-        selectedObjectDisplay.text = "Selected: None";
+        if (selectedObject != null)
+        {
+            selectedObject.GetComponent<Renderer>().material.color = Color.white;
+            selectedObjectDisplay.text = "Selected: None";
+            selectedObject = null;
+        }
     }
-
     void Update()
     {
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
             touchPosition = touch.position;
-
-            if (touch.phase == TouchPhase.Began)
+            // Touch started and not held
+            if (touch.phase == TouchPhase.Began && !onTouchHold && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
             {
-                if(createMode)
+                // Create mode
+                if (createMode)
                 {
-                    if (_arRaycastManager.Raycast(touchPosition, hits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
+                    // Instantiate new pet
+                    Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
+                    if (hitPose != null)
                     {
-                        var hitPose = hits[0].pose;
-                        ASL.ASLHelper.InstanitateASLObject("Character", hitPose.position, hitPose.rotation);
+                        ASL.ASLHelper.InstanitateASLObject("Character", (((Pose)hitPose).position), (((Pose)hitPose).rotation));
                     }
                 }
-
-                if(!createMode)
+                // Move mode
+                if (!createMode)
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(touch.position);
+                    Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
+                    Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                     RaycastHit hitObject;
-
-                    // Plane touched
-                    if (_arRaycastManager.Raycast(touchPosition, hits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
-                    {
-                        // Object selected
-                        if(selectedObject != null)
-                        {
-                            var hitPose = hits[0].pose;
-                            selectedObject.transform.position = hitPose.position;
-                        }
-                        else
-                        {
-                            DeselectObject();
-                        }
-                    }
-                    
+                    int layerMask = 1 << 9;
+                    layerMask = ~layerMask;
                     // Object touched
-                    if (Physics.Raycast(ray, out hitObject))
+                    if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
                     {
-                        SelectObject(hitObject.transform.gameObject);
+                        if (hitObject.collider != null)
+                        {
+                            SelectObject(hitObject.collider.gameObject);
+                        }
                     }
+                }
+                // Holding touch until touch phase ends
+                onTouchHold = true;
+            }
+            // Holding touch
+            else if (onTouchHold && selectedObject != null)
+            {
+                Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
+                if (hitPose != null)
+                {
+                    selectedObject.transform.position = ((Pose)hitPose).position;
                 }
             }
-
             if (touch.phase == TouchPhase.Ended)
             {
-                //onTouchHold = false;
+                onTouchHold = false;
                 DeselectObject();
             }
         }
