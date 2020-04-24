@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 5193720802596827660}
   - component: {fileID: 1173082835176488992}
   - component: {fileID: 4928143407403488643}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AR Plane
-  m_TagString: Untagged
+  m_TagString: AR Plane
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -144,7 +144,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7e4095c5609075846b657c8917aae797, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
