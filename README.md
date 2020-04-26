@@ -4,7 +4,7 @@
 
 > In-Development Multiplayer Augmented Reality Virtual Pet game
 > 
-> Developing using C#, Unity, the Augmented Space Library, AR Foundation, and ARCore
+> Developing in Unity using C#, the Augmented Space Library, the Google ARCore SDK, and the Unity AR Foundation framework
 
 ## Developers
 <img src="https://s3-us-west-2.amazonaws.com/uw-s3-cdn/wp-content/uploads/sites/6/2017/03/04142730/uw-bothell-squarelogo-1424849922003-150x150.png" align="right" width="100" height="100">
