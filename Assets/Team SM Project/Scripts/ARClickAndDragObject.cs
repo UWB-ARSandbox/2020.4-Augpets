@@ -6,24 +6,21 @@ using UnityEngine.EventSystems;
 
 public class ARClickAndDragObject : MonoBehaviour
 {
-    private Vector2 touchPosition;
-
     private ARRaycastManager _arRaycastManager;
     private GameObject _arSessionOrigin;
 
-    /*private GameObject selectedObject;
+    private GameObject selectedObject;
 
+    private Vector2 touchPosition;
     private bool onTouchHold = false;
 
-    private bool createMode = false;
+    private bool interactMode = true;
 
-
-    public Text selectedObjectDisplay;
-    public Button createButton;
-    public Button moveButton;*/
+    public Button interactButton;
+    public Button removeButton;
 
     private int selectedSlot = 1;
-    private string objectToPlace = "";
+    private string objectToPlace = "Capsule";
 
     public Button slot1;
     public int slot1Inventory = 3;
@@ -38,6 +35,9 @@ public class ARClickAndDragObject : MonoBehaviour
     public int slot4Inventory = 3;
     public Text slot4Text;
 
+    public Text selectedObjectDisplay;
+    public Image selectedSlotDisplay;
+
     private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
     private void Awake()
@@ -50,49 +50,59 @@ public class ARClickAndDragObject : MonoBehaviour
         _arSessionOrigin = GameObject.Find("AR Session Origin");
         _arRaycastManager = _arSessionOrigin.GetComponent<ARRaycastManager>();
 
-        //createButton.onClick.AddListener(SetCreateMode);
-        //moveButton.onClick.AddListener(SetMoveMode);
+        interactButton.onClick.AddListener(SetInteractMode);
+        removeButton.onClick.AddListener(SetRemoveMode);
 
         slot1.onClick.AddListener(SetSlot1);
         slot2.onClick.AddListener(SetSlot2);
         slot3.onClick.AddListener(SetSlot3);
         slot4.onClick.AddListener(SetSlot4);
+
+        selectedObjectDisplay.text = objectToPlace;
     }
 
-    /*private void SetCreateMode()
+    private void SetInteractMode()
     {
-        createMode = true;
+        interactMode = true;
         DeselectObject();
     }
 
-    private void SetMoveMode()
+    private void SetRemoveMode()
     {
-        createMode = false;
+        interactMode = false;
         DeselectObject();
-    }*/
+    }
 
     private void SetSlot1()
     {
         selectedSlot = 1;
-        objectToPlace = "Capsule Pet";
+        objectToPlace = "Capsule";
+        selectedSlotDisplay.transform.position = slot1.transform.position;
+        selectedObjectDisplay.text = objectToPlace;
     }
 
     private void SetSlot2()
     {
         selectedSlot = 2;
-        objectToPlace = "Cube Pet";
+        objectToPlace = "Cube";
+        selectedSlotDisplay.transform.position = slot2.transform.position;
+        selectedObjectDisplay.text = objectToPlace;
     }
 
     private void SetSlot3()
     {
         selectedSlot = 3;
-        objectToPlace = "Cylinder Pet";
+        objectToPlace = "Cylinder";
+        selectedSlotDisplay.transform.position = slot3.transform.position;
+        selectedObjectDisplay.text = objectToPlace;
     }
 
     private void SetSlot4()
     {
         selectedSlot = 4;
-        objectToPlace = "Sphere Pet";
+        objectToPlace = "Sphere";
+        selectedSlotDisplay.transform.position = slot4.transform.position;
+        selectedObjectDisplay.text = objectToPlace;
     }
 
     private bool CanPlaceObject()
@@ -137,47 +147,51 @@ public class ARClickAndDragObject : MonoBehaviour
         return false;
     }
 
-    void Update()
+    /*private void GetSlot(GameObject button)
     {
-        if (Input.touchCount > 0)
+        switch (button)
         {
-            Touch touch = Input.GetTouch(0);
-            touchPosition = touch.position;
-
-            // Touch started and not held
-            if (touch.phase == TouchPhase.Began && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
-            {
-                // Instantiate new pet
-                Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-                if (hitPose != null)
-                {
-                    if(CanPlaceObject())
-                    {
-                        ASL.ASLHelper.InstanitateASLObject(objectToPlace, (((Pose)hitPose).position), (((Pose)hitPose).rotation));
-                    }
-                }
-            }
+            case button == slot1:
+                SetSlot1();
+                break;
+            case button == slot2:
+                SetSlot2();
+                break;
+            case button == slot3:
+                SetSlot3();
+                break;
+            case button == slot4:
+                SetSlot4();
+                break;
         }
-    }
+    }*/
 
-    /*private void SelectObject(GameObject objectToSelect)
+    private void SelectObject(GameObject objectToSelect)
     {
         DeselectObject();
         selectedObject = objectToSelect;
         if (selectedObject != null)
         {
             selectedObject.GetComponent<Renderer>().material.color = Color.red;
-            selectedObjectDisplay.text = "Selected: " + selectedObject.name;
+            selectedObjectDisplay.text = selectedObject.name;
         }
     }
 
     private void DeselectObject()
     {
-        if(selectedObject != null)
+        if (selectedObject != null)
         {
             selectedObject.GetComponent<Renderer>().material.color = Color.white;
-            selectedObjectDisplay.text = "Selected: None";
+            selectedObjectDisplay.text = objectToPlace;
             selectedObject = null;
+        }
+    }
+
+    private void RemoveObject(GameObject objectToRemove)
+    {
+        if (objectToRemove != null)
+        {
+            //Destroy(objectToRemove);
         }
     }
 
@@ -188,46 +202,64 @@ public class ARClickAndDragObject : MonoBehaviour
             Touch touch = Input.GetTouch(0);
             touchPosition = touch.position;
 
-            // Touch started and not held
+            // Touch started and not held, place
             if (touch.phase == TouchPhase.Began && !onTouchHold && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
             {
-                // Create mode
-                if(createMode)
+                // Interact mode
+                if(interactMode)
                 {
                     // Instantiate new pet
                     Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
                     if (hitPose != null)
                     {
-                        ASL.ASLHelper.InstanitateASLObject("Character", (((Pose)hitPose).position), (((Pose)hitPose).rotation));
+                        if (CanPlaceObject())
+                        {
+                            ASL.ASLHelper.InstanitateASLObject(objectToPlace, (((Pose)hitPose).position), (((Pose)hitPose).rotation));
+                        }
                     }
                 }
-
-                // Move mode
-                if(!createMode)
+                // Remove mode
+                else
                 {
-                    Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-
-                    Ray ray = Camera.main.ScreenPointToRay(((Pose)hitPose).position);
+                    // Remove pet and add back to inventory
+                    Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                     RaycastHit hitObject;
-
                     int layerMask = 1 << 9;
                     layerMask = ~layerMask;
 
                     // Object touched
                     if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
                     {
-                        if(hitObject.collider != null)
+                        if (hitObject.collider != null)
+                        {
+                            RemoveObject(hitObject.collider.gameObject);
+                        }
+                    }
+                }
+                onTouchHold = true;
+            }
+            // Touch held on plane, select object
+            else if (selectedObject == null)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(touchPosition);
+                RaycastHit hitObject;
+                int layerMask = 1 << 9;
+                layerMask = ~layerMask;
+
+                // Object touched
+                if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
+                {
+                    if (hitObject.collider != null)
+                    {
+                        if (!hitObject.collider.gameObject.name.Contains("ARPlane"))
                         {
                             SelectObject(hitObject.collider.gameObject);
                         }
                     }
                 }
-
-                // Holding touch until touch phase ends
-                onTouchHold = true;
             }
-            // Holding touch
-            else if(onTouchHold && selectedObject != null)
+            // Touch held on object, move
+            else if (onTouchHold && selectedObject != null)
             {
                 Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
                 if (hitPose != null)
@@ -236,11 +268,12 @@ public class ARClickAndDragObject : MonoBehaviour
                 }
             }
 
+            // Touch released, drop object
             if (touch.phase == TouchPhase.Ended)
             {
                 onTouchHold = false;
                 DeselectObject();
             }
         }
-    }*/
+    }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterMovement : MonoBehaviour
+public class PetMovement : MonoBehaviour
 {
     float speed = 0.5f;
     float rotationSpeed = 100f;
