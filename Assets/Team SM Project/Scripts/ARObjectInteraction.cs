@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.EventSystems;
 
-public class ARClickAndDragObject : MonoBehaviour
+public class ARObjectInteraction : MonoBehaviour
 {
     private ARRaycastManager _arRaycastManager;
     private GameObject _arSessionOrigin;
@@ -24,15 +24,19 @@ public class ARClickAndDragObject : MonoBehaviour
 
     public Button slot1;
     public int slot1Inventory = 3;
-    public Text slot1Text;
+    
     public Button slot2;
     public int slot2Inventory = 3;
-    public Text slot2Text;
+    
     public Button slot3;
     public int slot3Inventory = 3;
-    public Text slot3Text;
+    
     public Button slot4;
     public int slot4Inventory = 3;
+
+    public Text slot1Text;
+    public Text slot2Text;
+    public Text slot3Text;
     public Text slot4Text;
 
     public Text selectedObjectDisplay;
