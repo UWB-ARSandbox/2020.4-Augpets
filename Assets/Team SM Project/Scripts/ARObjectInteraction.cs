@@ -12,7 +12,6 @@ public class ARObjectInteraction : MonoBehaviour
     private GameObject selectedObject;
 
     private Vector2 touchPosition;
-    private bool onTouchHold = false;
 
     private bool interactMode = true;
 
@@ -176,8 +175,8 @@ public class ARObjectInteraction : MonoBehaviour
         selectedObject = objectToSelect;
         if (selectedObject != null)
         {
-            selectedObject.GetComponent<Renderer>().material.color = Color.red;
-            selectedObjectDisplay.text = selectedObject.name;
+            // Remove "(Clone)" from Name
+            selectedObjectDisplay.text = selectedObject.name.Remove(selectedObject.name.IndexOf("(Clone)"), 7);
         }
     }
 
@@ -185,7 +184,6 @@ public class ARObjectInteraction : MonoBehaviour
     {
         if (selectedObject != null)
         {
-            selectedObject.GetComponent<Renderer>().material.color = Color.white;
             selectedObjectDisplay.text = objectToPlace;
             selectedObject = null;
         }
@@ -206,8 +204,31 @@ public class ARObjectInteraction : MonoBehaviour
             Touch touch = Input.GetTouch(0);
             touchPosition = touch.position;
 
-            // Touch started and not held, place
-            if (touch.phase == TouchPhase.Began && !onTouchHold && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+
+            // Raycast on touch position
+            Ray ray = Camera.main.ScreenPointToRay(touchPosition);
+            RaycastHit hitObject;
+            int layerMask = 1 << 9;
+            layerMask = ~layerMask;
+
+            // Check for Object touched, not AR Plane
+            if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
+            {
+                if (hitObject.collider != null)
+                {
+                    if (!hitObject.collider.gameObject.name.Contains("ARPlane"))
+                    {
+                        if (selectedObject == null)
+                        {
+                            // Select Object at touch position
+                            SelectObject(hitObject.collider.gameObject);
+                        }
+                    }
+                }
+            }
+
+            // Touch on AR Plane and no object selected, place
+            if (touch.phase == TouchPhase.Began && selectedObject == null && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
             {
                 // Interact mode
                 if(interactMode)
@@ -225,45 +246,11 @@ public class ARObjectInteraction : MonoBehaviour
                 // Remove mode
                 else
                 {
-                    // Remove pet and add back to inventory
-                    Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-                    RaycastHit hitObject;
-                    int layerMask = 1 << 9;
-                    layerMask = ~layerMask;
-
-                    // Object touched
-                    if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
-                    {
-                        if (hitObject.collider != null)
-                        {
-                            RemoveObject(hitObject.collider.gameObject);
-                        }
-                    }
-                }
-                onTouchHold = true;
-            }
-            // Touch held on plane, select object
-            else if (selectedObject == null)
-            {
-                Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-                RaycastHit hitObject;
-                int layerMask = 1 << 9;
-                layerMask = ~layerMask;
-
-                // Object touched
-                if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
-                {
-                    if (hitObject.collider != null)
-                    {
-                        if (!hitObject.collider.gameObject.name.Contains("ARPlane"))
-                        {
-                            SelectObject(hitObject.collider.gameObject);
-                        }
-                    }
+                    RemoveObject(hitObject.collider.gameObject);
                 }
             }
-            // Touch held on object, move
-            else if (onTouchHold && selectedObject != null)
+            // Touch on AR Plane and object selected, move
+            else if (selectedObject != null && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
             {
                 Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
                 if (hitPose != null)
@@ -275,7 +262,6 @@ public class ARObjectInteraction : MonoBehaviour
             // Touch released, drop object
             if (touch.phase == TouchPhase.Ended)
             {
-                onTouchHold = false;
                 DeselectObject();
             }
         }

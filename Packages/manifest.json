@@ -13,6 +13,7 @@
     "com.unity.xr.arfoundation": "4.0.0-preview.1",
     "com.unity.xr.arsubsystems": "4.0.0-preview.1",
     "com.unity.xr.management": "3.2.6",
+    "com.yasirkula.runtimeinspector": "https://github.com/yasirkula/UnityRuntimeInspector.git",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -49,6 +50,10 @@
     "com.google.ar.core.arfoundation.extensions": {
       "revision": "HEAD",
       "hash": "cda9970171c104155c3ba7a12e9b42ea247f645d"
+    },
+    "com.yasirkula.runtimeinspector": {
+      "revision": "HEAD",
+      "hash": "ec427a9ce7be456d43f97c58d28034ca67cdc0c1"
     }
   }
 }
