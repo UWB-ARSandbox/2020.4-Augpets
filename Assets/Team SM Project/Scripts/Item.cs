@@ -1,0 +1,35 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Item
+{
+    public int id;
+    public string type;
+    public string name;
+    public bool placed;
+    public Sprite icon;
+    public Dictionary<string, int> stats = new Dictionary<string, int>();
+
+    // Constructor
+    public Item(int id, string type, string name, Dictionary<string, int> stats)
+    {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.placed = false;
+        this.icon = Resources.Load<Sprite>("Sprites/Items/" + type);
+        this.stats = stats;
+    }
+
+    // Copy constructor
+    public Item(Item item)
+    {
+        this.id = item.id;
+        this.type = item.type;
+        this.name = item.name;
+        this.placed = item.placed;
+        this.icon = Resources.Load<Sprite>("Sprites/Items/" + item.type);
+        this.stats = item.stats;
+    }
+}

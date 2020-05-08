@@ -7,7 +7,7 @@ TagManager:
   - MatchInfo
   - AvailableMatches
   - AR Plane
-  - Inventory Slot
+  - Object
   layers:
   - Default
   - TransparentFX

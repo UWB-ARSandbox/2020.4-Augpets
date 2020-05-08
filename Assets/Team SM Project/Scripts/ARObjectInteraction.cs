@@ -6,10 +6,12 @@ using UnityEngine.EventSystems;
 
 public class ARObjectInteraction : MonoBehaviour
 {
+    public GraphicRaycaster raycaster;
+    public PointerEventData pointerEventData;
     private ARRaycastManager _arRaycastManager;
     private GameObject _arSessionOrigin;
 
-    private GameObject selectedObject;
+    private GameObject selectedObject;  // selected object
 
     private Vector2 touchPosition;
 
@@ -18,30 +20,15 @@ public class ARObjectInteraction : MonoBehaviour
     public Button interactButton;
     public Button removeButton;
 
-    private int selectedSlot = 1;
-    private string objectToPlace = "Capsule";
-
-    public Button slot1;
-    public int slot1Inventory = 3;
-    
-    public Button slot2;
-    public int slot2Inventory = 3;
-    
-    public Button slot3;
-    public int slot3Inventory = 3;
-    
-    public Button slot4;
-    public int slot4Inventory = 3;
-
-    public Text slot1Text;
-    public Text slot2Text;
-    public Text slot3Text;
-    public Text slot4Text;
+    public Inventory inventory;
+    public UIInventory inventoryUI;
+    private int selectedSlot = 0;        // selected slot
+    public Item selectedItem;           // item in selected slot
 
     public Text selectedObjectDisplay;
     public Image selectedSlotDisplay;
 
-    private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
+    //private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
     private void Awake()
     {
@@ -56,12 +43,8 @@ public class ARObjectInteraction : MonoBehaviour
         interactButton.onClick.AddListener(SetInteractMode);
         removeButton.onClick.AddListener(SetRemoveMode);
 
-        slot1.onClick.AddListener(SetSlot1);
-        slot2.onClick.AddListener(SetSlot2);
-        slot3.onClick.AddListener(SetSlot3);
-        slot4.onClick.AddListener(SetSlot4);
-
-        selectedObjectDisplay.text = objectToPlace;
+        selectedItem = inventory.GetItemList()[selectedSlot];
+        selectedObjectDisplay.text = selectedItem.type;
     }
 
     private void SetInteractMode()
@@ -76,107 +59,15 @@ public class ARObjectInteraction : MonoBehaviour
         DeselectObject();
     }
 
-    private void SetSlot1()
-    {
-        selectedSlot = 1;
-        objectToPlace = "Capsule";
-        selectedSlotDisplay.transform.position = slot1.transform.position;
-        selectedObjectDisplay.text = objectToPlace;
-    }
-
-    private void SetSlot2()
-    {
-        selectedSlot = 2;
-        objectToPlace = "Cube";
-        selectedSlotDisplay.transform.position = slot2.transform.position;
-        selectedObjectDisplay.text = objectToPlace;
-    }
-
-    private void SetSlot3()
-    {
-        selectedSlot = 3;
-        objectToPlace = "Cylinder";
-        selectedSlotDisplay.transform.position = slot3.transform.position;
-        selectedObjectDisplay.text = objectToPlace;
-    }
-
-    private void SetSlot4()
-    {
-        selectedSlot = 4;
-        objectToPlace = "Sphere";
-        selectedSlotDisplay.transform.position = slot4.transform.position;
-        selectedObjectDisplay.text = objectToPlace;
-    }
-
-    private bool CanPlaceObject()
-    {
-        switch (selectedSlot)
-        {
-            case 1:
-                if(slot1Inventory > 0)
-                {
-                    slot1Inventory--;
-                    slot1Text.text = slot1Inventory.ToString();
-                    return true;
-                }
-                break;
-            case 2:
-                if (slot2Inventory > 0)
-                {
-                    slot2Inventory--;
-                    slot2Text.text = slot2Inventory.ToString();
-                    return true;
-                }
-                break;
-            case 3:
-                if (slot3Inventory > 0)
-                {
-                    slot3Inventory--;
-                    slot3Text.text = slot3Inventory.ToString();
-                    return true;
-                }
-                break;
-            case 4:
-                if (slot4Inventory > 0)
-                {
-                    slot4Inventory--;
-                    slot4Text.text = slot4Inventory.ToString();
-                    return true;
-                }
-                break;
-            default:
-                return false;
-        }
-        return false;
-    }
-
-    /*private void GetSlot(GameObject button)
-    {
-        switch (button)
-        {
-            case button == slot1:
-                SetSlot1();
-                break;
-            case button == slot2:
-                SetSlot2();
-                break;
-            case button == slot3:
-                SetSlot3();
-                break;
-            case button == slot4:
-                SetSlot4();
-                break;
-        }
-    }*/
-
     private void SelectObject(GameObject objectToSelect)
     {
         DeselectObject();
         selectedObject = objectToSelect;
         if (selectedObject != null)
         {
-            // Remove "(Clone)" from Name
-            selectedObjectDisplay.text = selectedObject.name.Remove(selectedObject.name.IndexOf("(Clone)"), 7);
+            // Display name of selected object
+            string type = objectToSelect.name.Remove(objectToSelect.name.IndexOf("(Clone)"), 7);
+            selectedObjectDisplay.text = type;
         }
     }
 
@@ -184,16 +75,21 @@ public class ARObjectInteraction : MonoBehaviour
     {
         if (selectedObject != null)
         {
-            selectedObjectDisplay.text = objectToPlace;
+            // Display name of item in selected slot
+            selectedObjectDisplay.text = inventory.GetItemList()[selectedSlot].type;
             selectedObject = null;
         }
     }
 
-    private void RemoveObject(GameObject objectToRemove)
+    private void PickupObject(GameObject objectToPickup)
     {
-        if (objectToRemove != null)
+        if (objectToPickup != null)
         {
-            //Destroy(objectToRemove);
+            string type = objectToPickup.name.Remove(objectToPickup.name.IndexOf("(Clone)"), 7);
+            // Remove object and put back in inventory
+            inventory.PickupItem(inventory.CheckForItem(type).id);
+            // ASL?
+            Destroy(objectToPickup);
         }
     }
 
@@ -204,58 +100,93 @@ public class ARObjectInteraction : MonoBehaviour
             Touch touch = Input.GetTouch(0);
             touchPosition = touch.position;
 
-
-            // Raycast on touch position
-            Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-            RaycastHit hitObject;
-            int layerMask = 1 << 9;
-            layerMask = ~layerMask;
-
-            // Check for Object touched, not AR Plane
-            if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
+            // Touch on UI
+            if(EventSystem.current.IsPointerOverGameObject(touch.fingerId))
             {
-                if (hitObject.collider != null)
+                // Graphic Raycast for UI Slot selection
+                pointerEventData = new PointerEventData(EventSystem.current);
+                pointerEventData.position = touchPosition;
+                List<RaycastResult> results = new List<RaycastResult>();
+
+                raycaster.Raycast(pointerEventData, results);
+                foreach (RaycastResult result in results)
                 {
-                    if (!hitObject.collider.gameObject.name.Contains("ARPlane"))
+                    if(result.gameObject.GetComponent<UIItem>() != null)
                     {
-                        if (selectedObject == null)
-                        {
-                            // Select Object at touch position
-                            SelectObject(hitObject.collider.gameObject);
-                        }
+                        selectedSlot = inventoryUI.GetUIItemList().IndexOf(result.gameObject.GetComponent<UIItem>());
+                        selectedItem = inventory.GetItemList()[selectedSlot];
+                        selectedObjectDisplay.text = selectedItem.type;
+                        selectedSlotDisplay.transform.position = result.gameObject.transform.position;
                     }
                 }
             }
-
-            // Touch on AR Plane and no object selected, place
-            if (touch.phase == TouchPhase.Began && selectedObject == null && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+            // Touch on World
+            else
             {
-                // Interact mode
-                if(interactMode)
+                // Physics Raycast on touch position
+                Ray ray = Camera.main.ScreenPointToRay(touchPosition);
+                RaycastHit hitObject;
+                int layerMask = 1 << 9;
+                layerMask = ~layerMask;
+
+                // Check for Object touched, not AR Plane
+                if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
                 {
-                    // Instantiate new pet
-                    Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-                    if (hitPose != null)
+                    if (hitObject.collider != null)
                     {
-                        if (CanPlaceObject())
+                        if (!hitObject.collider.gameObject.name.Contains("ARPlane"))
                         {
-                            ASL.ASLHelper.InstanitateASLObject(objectToPlace, (((Pose)hitPose).position), (((Pose)hitPose).rotation));
+                            if (selectedObject == null)
+                            {
+                                // Select Object at touch position
+                                SelectObject(hitObject.collider.gameObject);
+                            }
                         }
                     }
                 }
-                // Remove mode
-                else
+
+                // Touch on AR Plane and no object selected, place
+                if (touch.phase == TouchPhase.Began && selectedObject == null)
                 {
-                    RemoveObject(hitObject.collider.gameObject);
+                    // Interact mode
+                    if(interactMode)
+                    {
+                        // Instantiate new object
+                        Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
+                        if (hitPose != null)
+                        {
+                            if(!inventory.GetItemList()[selectedSlot].placed)
+                            {
+                                // Place object
+                                ASL.ASLHelper.InstanitateASLObject(inventory.GetItemList()[selectedSlot].type, (((Pose)hitPose).position), (((Pose)hitPose).rotation));
+                                inventory.PlaceItem(inventory.GetItemList()[selectedSlot].id);
+                            }
+                        }
+                    }
+                    // Pickup mode
+                    else
+                    {
+                        // Pickup object
+                        PickupObject(hitObject.collider.gameObject);
+                    }
                 }
-            }
-            // Touch on AR Plane and object selected, move
-            else if (selectedObject != null && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
-            {
-                Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-                if (hitPose != null)
+                // Touch on AR Plane and object selected, move
+                else if (selectedObject != null)
                 {
-                    selectedObject.transform.position = ((Pose)hitPose).position;
+                    // Interact mode
+                    if(interactMode)
+                    {
+                        Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
+                        if (hitPose != null)
+                        {
+                            selectedObject.transform.position = ((Pose)hitPose).position;
+                        }
+                    }
+                    // Pickup mode
+                    else
+                    {
+                        PickupObject(selectedObject);
+                    }
                 }
             }
 
