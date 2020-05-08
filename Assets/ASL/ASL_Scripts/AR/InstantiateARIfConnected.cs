@@ -16,6 +16,12 @@ namespace ASL
             if (FindObjectOfType<GameLiftManager>() != null && ASL.GameLiftManager.GetInstance() != null && ASL.GameLiftManager.GetInstance().m_Client.ConnectedAndReady)
             {
                 Instantiate(Resources.Load("ASL_Prefabs/ARFoundationPrefabs/ARHolder"), Vector3.zero, Quaternion.identity);
+
+                /*if(Application.isEditor)
+                {
+                    GameObject.Destroy(GameObject.Find("AR Camera"));
+                    ASL.ASLHelper.InstanitateASLObject("PCPlayer", Vector3.zero, Quaternion.identity);
+                }*/
                 Destroy(gameObject); //No longer need - delete to clean up resources
             }
 

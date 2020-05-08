@@ -19,3 +19,4 @@
 | ------------- |
 | <a href="https://www.flaticon.com/free-icon/backpack_174236">Backpack icon</a> by Flat Icons |
 | <a href="https://www.dafont.com/riffic.font">Riffic Free Bold font</a> by Nini Prower</a> |
+| 3D Models by <a href="http://quaternius.com/">Quaternius</a> |

@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class WorldOriginManager : MonoBehaviour
 {
-
-    public static void CreateWorldOrigin()
+    GameObject worldOrigin;
+    private void Start()
     {
-        ASL.ASLHelper.InstanitateASLObject("WorldOrigin", Vector3.zero, Quaternion.identity, "", "", SpawnWorldOrigin);
+        if(ASL.GameLiftManager.GetInstance().AmLowestPeer())
+        {
+            ASL.ASLHelper.InstanitateASLObject("WorldOrigin", Vector3.zero, Quaternion.identity, "", "", SpawnWorldOrigin);
+        }
+        
     }
 
-    // Update is called once per frame
     private static void SpawnWorldOrigin(GameObject worldOrigin)
     {
         worldOrigin.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
         {
-            ASL.ASLHelper.CreateARCoreCloudAnchor(new Pose(), null, _setWorldOrigin:true);
+            ASL.ASLHelper.CreateARCoreCloudAnchor(Pose.identity, worldOrigin.GetComponent<ASL.ASLObject>(), _waitForAllUsersToResolve:false);
         });
     }
+
 }
