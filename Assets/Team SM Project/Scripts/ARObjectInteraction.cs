@@ -11,11 +11,11 @@ public class ARObjectInteraction : MonoBehaviour
     private ARRaycastManager _arRaycastManager;
     private GameObject _arSessionOrigin;
 
-    private GameObject selectedObject;  // selected object
+    public GameObject selectedObject;  // selected object
 
     private Vector2 touchPosition;
 
-    private bool interactMode = true;
+    public bool interactMode = true;
 
     public Button interactButton;
     public Button removeButton;
@@ -27,6 +27,14 @@ public class ARObjectInteraction : MonoBehaviour
 
     public Text selectedObjectDisplay;
     public Image selectedSlotDisplay;
+
+    public static bool IsPCPlayer
+    {
+        get
+        {
+            return (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor);
+        }
+    }
 
     //private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
@@ -95,13 +103,24 @@ public class ARObjectInteraction : MonoBehaviour
 
     void Update()
     {
-        if (Input.touchCount > 0)
+        if (Input.touchCount > 0 || (IsPCPlayer && Input.GetMouseButton(0)))
         {
-            Touch touch = Input.GetTouch(0);
-            touchPosition = touch.position;
+            Touch touch = new Touch();
+            int pointerID;
+            if(IsPCPlayer)
+            {
+                touchPosition = Input.mousePosition;
+                pointerID = -1;
+            }
+            else
+            {
+                touch = Input.GetTouch(0);
+                touchPosition = touch.position;
+                pointerID = touch.fingerId;
+            }
 
             // Touch on UI
-            if(EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+            if(EventSystem.current.IsPointerOverGameObject(pointerID))
             {
                 // Graphic Raycast for UI Slot selection
                 pointerEventData = new PointerEventData(EventSystem.current);
@@ -134,7 +153,7 @@ public class ARObjectInteraction : MonoBehaviour
                 {
                     if (hitObject.collider != null)
                     {
-                        if (!hitObject.collider.gameObject.name.Contains("ARPlane"))
+                        if (!hitObject.collider.gameObject.name.Contains("PlatformPlane"))
                         {
                             if (selectedObject == null)
                             {
@@ -146,7 +165,7 @@ public class ARObjectInteraction : MonoBehaviour
                 }
 
                 // Touch on AR Plane and no object selected, place
-                if (touch.phase == TouchPhase.Began && selectedObject == null)
+                if (((IsPCPlayer && Input.GetMouseButtonDown(0)) || touch.phase == TouchPhase.Began) && selectedObject == null)
                 {
                     // Interact mode
                     if(interactMode)
@@ -191,7 +210,7 @@ public class ARObjectInteraction : MonoBehaviour
             }
 
             // Touch released, drop object
-            if (touch.phase == TouchPhase.Ended)
+            if ((IsPCPlayer && Input.GetMouseButtonUp(0)) || touch.phase == TouchPhase.Ended)
             {
                 DeselectObject();
             }

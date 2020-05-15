@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
  
- // Based on code from habrador.com/tutorials/math/10-triangulation
+ // Based on code from habrador.com/tutorials/math/10-triangulation It currently uses the simplest
+ // 2D convex mesh triangulation. 
 public class Triangulator
 { 
     public static int[] Triangulate(int edgePointCount)

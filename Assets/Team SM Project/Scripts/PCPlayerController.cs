@@ -8,7 +8,7 @@ public class PCPlayerController : MonoBehaviour
     public static string STRAFFE_AXIS = "Horizontal";
     public static KeyCode PAUSE_BUTTON = KeyCode.Escape;
     public static KeyCode SPRINT_KEY = KeyCode.LeftShift;
-    private static float WALK_SPEED = 5.0f;
+    private static float WALK_SPEED = 2.0f;
     private static float SPRINT_SPEED = 10.0f;
     public float movementSpeed;
     public bool isSprinting;
@@ -18,25 +18,43 @@ public class PCPlayerController : MonoBehaviour
     public Vector2 lookVector;
     private Vector2 smoothLookVector;
     public Transform playerCamera;
+    public static Transform ASLObject;
     // Start is called before the first frame update
     void Start()
     {
+        
         playerCamera = this.transform.GetChild(0);
         lookVector = Vector2.zero;
         smoothLookVector = Vector2.zero;
         Cursor.lockState = CursorLockMode.Locked;
         isSprinting = false;
         isMoving = false;
+
+        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            playerCamera.gameObject.tag = "MainCamera";
+            GameObject.Destroy(GameObject.Find("AR Camera"));
+        }
+        else
+        {
+            GameObject.Destroy(this.gameObject);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        this.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+        movePlayer();
+        rotatePlayer();
+        if(isMoving)
         {
-            this.GetComponent<ASL.ASLObject>().SendAndSetLocalRotation(rotatePlayer());
-            this.GetComponent<ASL.ASLObject>().SendAndIncrementLocalPosition(movePlayer());  
-        });
+            ASLObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+            {
+                ASLObject.GetComponent<ASL.ASLObject>().SendAndSetLocalPosition(this.transform.position);  
+            });
+        }
+        
+
         if(Input.GetKeyDown(PAUSE_BUTTON))
         {
             toggleCursorLock();
@@ -53,12 +71,12 @@ public class PCPlayerController : MonoBehaviour
 
     }
 
-    private Vector3 movePlayer()
+    private void movePlayer()
     {
         movementSpeed = this.isSprinting ? SPRINT_SPEED : WALK_SPEED;
         float translation = Input.GetAxisRaw(TRANSLATION_AXIS) * movementSpeed * Time.deltaTime;
         float straffe = Input.GetAxisRaw(STRAFFE_AXIS) * movementSpeed * Time.deltaTime;
-        if(translation > 0 || straffe > 0)
+        if(Mathf.Abs(translation) > 0 || Mathf.Abs(straffe) > 0)
         {
             isMoving = true;
         }
@@ -66,10 +84,10 @@ public class PCPlayerController : MonoBehaviour
         {
             isMoving = false;
         }
-        return new Vector3(straffe, 0.0f, translation);
+        this.transform.Translate(straffe, 0.0F, translation);
     }
 
-    private Quaternion rotatePlayer()
+    private void rotatePlayer()
     {
         Vector2 mouseDeltaVector = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
         mouseDeltaVector *= lookSensitivity * lookSmoothing;
@@ -77,9 +95,10 @@ public class PCPlayerController : MonoBehaviour
             Mathf.Lerp(smoothLookVector.y, mouseDeltaVector.y, 1.0f / lookSmoothing));
         lookVector += smoothLookVector;
 
-        playerCamera.localRotation = Quaternion.AngleAxis(-lookVector.y, Vector3.right);
-        return Quaternion.AngleAxis(lookVector.x, transform.up);
+        playerCamera.localRotation = Quaternion.AngleAxis(Mathf.Clamp(-lookVector.y, -90f, 90f), Vector3.right);
+        transform.localRotation = Quaternion.AngleAxis(lookVector.x, transform.up);
     }
+
     private void toggleCursorLock()
     {
         if(Cursor.lockState == CursorLockMode.Locked)
@@ -90,5 +109,10 @@ public class PCPlayerController : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
+    }
+
+    public static void getASLObjectReference(GameObject aslObject)
+    {
+        ASLObject = aslObject.transform;
     }
 }

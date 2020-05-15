@@ -83,7 +83,7 @@ public class PlatformController : MonoBehaviour
         platform.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
         {
   
-            ASL.ASLHelper.CreateARCoreCloudAnchor(cloudAnchorPose, platform.GetComponent<ASL.ASLObject>(), null, false, false);
+            //ASL.ASLHelper.CreateARCoreCloudAnchor(cloudAnchorPose, platform.GetComponent<ASL.ASLObject>(), null, false, false);
             platform.GetComponent<ASL.ASLObject>().SendFloatArray(Vector3ArrayToFloatArray(verticesOfSelectedPlane));
         });
     }
@@ -107,6 +107,7 @@ public class PlatformController : MonoBehaviour
             platform.GetComponent<MeshCollider>().sharedMesh = null;
             platform.GetComponent<MeshCollider>().sharedMesh = platformMesh;
         }
+        platform.GetComponent<MeshRenderer>().enabled = true;
     }
 
     public static float[] Vector3ArrayToFloatArray(Vector3[] vectors)
@@ -134,5 +135,10 @@ public class PlatformController : MonoBehaviour
             result[i] = new Vector3(floats[(i * 2) + 1], floats[0], floats[(i * 2) + 2]);
         }
         return result;
+    }
+
+    public static void debugPlatformCreated(GameObject _worldOriginVisualizationObject, Pose _spawnLocation)
+    {
+        Debug.Log("Platform Created!");
     }
 }

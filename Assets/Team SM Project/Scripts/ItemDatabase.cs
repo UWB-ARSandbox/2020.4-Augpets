@@ -31,7 +31,8 @@ public class ItemDatabase : MonoBehaviour
             new Item(0, "Dog", "Unnamed Dog",
             new Dictionary<string, int>
             {
-                {"Test", 10 }
+                {"Power", 10 },
+                {"Speed", 10 }
             }),
             // Cat
             new Item(1, "Cat", "Unnamed Cat",
@@ -47,6 +48,30 @@ public class ItemDatabase : MonoBehaviour
             }),
             // Eagle
             new Item(3, "Eagle", "Unnamed Eagle",
+            new Dictionary<string, int>
+            {
+                {"Test", 10 }
+            }),
+            // Cow
+            new Item(4, "Cow", "Unnamed Cow",
+            new Dictionary<string, int>
+            {
+                {"Test", 10 }
+            }),
+            // Pig
+            new Item(5, "Pig", "Unnamed Pig",
+            new Dictionary<string, int>
+            {
+                {"Test", 10 }
+            }),
+            // Horse
+            new Item(6, "Horse", "Unnamed Horse",
+            new Dictionary<string, int>
+            {
+                {"Test", 10 }
+            }),
+            // Sheep
+            new Item(7, "Sheep", "Unnamed Sheep",
             new Dictionary<string, int>
             {
                 {"Test", 10 }

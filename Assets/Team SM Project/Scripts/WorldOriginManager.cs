@@ -7,6 +7,7 @@ public class WorldOriginManager : MonoBehaviour
     GameObject worldOrigin;
     private void Start()
     {
+
         if(ASL.GameLiftManager.GetInstance().AmLowestPeer())
         {
             ASL.ASLHelper.InstanitateASLObject("WorldOrigin", Vector3.zero, Quaternion.identity, "", "", SpawnWorldOrigin);
