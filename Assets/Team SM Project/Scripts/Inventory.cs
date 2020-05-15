@@ -16,6 +16,11 @@ public class Inventory : MonoBehaviour
         GiveItem("Cat");
         GiveItem("Wolf");
         GiveItem("Eagle");
+        GiveItem("Cow");
+        GiveItem("Pig");
+        GiveItem("Horse");
+        GiveItem("Sheep");
+        GiveItem("Baby Dragon");
     }
 
     public void GiveItem(int id)

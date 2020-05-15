@@ -26,6 +26,7 @@ public class ARObjectInteraction : MonoBehaviour
     public Item selectedItem;           // item in selected slot
 
     public Text selectedObjectDisplay;
+    public Text selectedNameDisplay;
     public Image selectedSlotDisplay;
 
     public static bool IsPCPlayer
@@ -53,6 +54,12 @@ public class ARObjectInteraction : MonoBehaviour
 
         selectedItem = inventory.GetItemList()[selectedSlot];
         selectedObjectDisplay.text = selectedItem.type;
+        selectedNameDisplay.text = selectedItem.name;
+
+        if(!IsPCPlayer)
+        {
+            GameObject.Find("PCPlayer").SetActive(false);
+        }
     }
 
     private void SetInteractMode()
@@ -76,6 +83,7 @@ public class ARObjectInteraction : MonoBehaviour
             // Display name of selected object
             string type = objectToSelect.name.Remove(objectToSelect.name.IndexOf("(Clone)"), 7);
             selectedObjectDisplay.text = type;
+            selectedNameDisplay.text = inventory.CheckForItem(type).name;
         }
     }
 
@@ -85,6 +93,7 @@ public class ARObjectInteraction : MonoBehaviour
         {
             // Display name of item in selected slot
             selectedObjectDisplay.text = inventory.GetItemList()[selectedSlot].type;
+            selectedNameDisplay.text = inventory.GetItemList()[selectedSlot].name;
             selectedObject = null;
         }
     }
@@ -135,6 +144,7 @@ public class ARObjectInteraction : MonoBehaviour
                         selectedSlot = inventoryUI.GetUIItemList().IndexOf(result.gameObject.GetComponent<UIItem>());
                         selectedItem = inventory.GetItemList()[selectedSlot];
                         selectedObjectDisplay.text = selectedItem.type;
+                        selectedNameDisplay.text = selectedItem.name;
                         selectedSlotDisplay.transform.position = result.gameObject.transform.position;
                     }
                 }
@@ -153,7 +163,7 @@ public class ARObjectInteraction : MonoBehaviour
                 {
                     if (hitObject.collider != null)
                     {
-                        if (!hitObject.collider.gameObject.name.Contains("PlatformPlane"))
+                        if (!hitObject.collider.gameObject.name.Contains("PlatformPlane") && !hitObject.collider.gameObject.name.Contains("ARPlane"))
                         {
                             if (selectedObject == null)
                             {

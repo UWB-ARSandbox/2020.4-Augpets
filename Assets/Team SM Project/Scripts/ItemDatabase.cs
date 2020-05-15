@@ -28,53 +28,76 @@ public class ItemDatabase : MonoBehaviour
         items = new List<Item>()
         {
             // Dog
-            new Item(0, "Dog", "Unnamed Dog",
+            new Item(0, "Dog", "Unnamed",
             new Dictionary<string, int>
             {
                 {"Power", 10 },
-                {"Speed", 10 }
+                {"Speed", 10 },
+                {"Flight", 0}
             }),
             // Cat
-            new Item(1, "Cat", "Unnamed Cat",
+            new Item(1, "Cat", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Test", 10 }
+                {"Power", 10 },
+                {"Speed", 10 },
+                {"Flight", 0}
             }),
             // Wolf
-            new Item(2, "Wolf", "Unnamed Wolf",
+            new Item(2, "Wolf", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Test", 10 }
+                {"Power", 10 },
+                {"Speed", 10 },
+                {"Flight", 0}
             }),
             // Eagle
-            new Item(3, "Eagle", "Unnamed Eagle",
+            new Item(3, "Eagle", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Test", 10 }
+                {"Power", 10 },
+                {"Speed", 10 },
+                {"Flight", 1}
             }),
             // Cow
-            new Item(4, "Cow", "Unnamed Cow",
+            new Item(4, "Cow", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Test", 10 }
+                {"Power", 10 },
+                {"Speed", 10 },
+                {"Flight", 0}
             }),
             // Pig
-            new Item(5, "Pig", "Unnamed Pig",
+            new Item(5, "Pig", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Test", 10 }
+                {"Power", 10 },
+                {"Speed", 10 },
+                {"Flight", 0}
             }),
             // Horse
-            new Item(6, "Horse", "Unnamed Horse",
+            new Item(6, "Horse", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Test", 10 }
+                {"Power", 10 },
+                {"Speed", 10 },
+                {"Flight", 0}
             }),
             // Sheep
-            new Item(7, "Sheep", "Unnamed Sheep",
+            new Item(7, "Sheep", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Test", 10 }
+                {"Power", 10 },
+                {"Speed", 10 },
+                {"Flight", 0}
+            }),
+            // Baby Dragon
+            new Item(8, "Baby Dragon", "Unnamed",
+            new Dictionary<string, int>
+            {
+                {"Power", 10 },
+                {"Speed", 10 },
+                {"Flight", 1}
             })
         };
     }

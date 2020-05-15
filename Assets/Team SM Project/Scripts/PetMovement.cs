@@ -6,6 +6,9 @@ public class PetMovement : MonoBehaviour
 {
     float speed = 0.5f;
     float rotationSpeed = 100f;
+    private Inventory inventory;
+    private Item pet;
+    private int range = 500;
     private int rotationDirection = 0;
     private Vector3 movementVector = Vector3.zero;
     private Vector3 rotationVector = Vector3.zero;
@@ -18,7 +21,12 @@ public class PetMovement : MonoBehaviour
 
     void Start()
     {
-        
+        inventory = GameObject.Find("Pet Manager").GetComponent<Inventory>();
+        pet = inventory.CheckForItem(this.gameObject.name.Remove(this.gameObject.name.IndexOf("(Clone)"), 7));
+        if(pet != null)
+        {
+            //speed = pet.stats["Speed"];
+        }
     }
 
     // Update is called once per frame
@@ -46,14 +54,8 @@ public class PetMovement : MonoBehaviour
         {
             rotationVector = rotationDirection * transform.up * rotationSpeed;
         }
-        if(isWalking)
-        {
-            movementVector = transform.forward * speed;
-        }
-        else
-        {
-            movementVector = Vector3.zero;
-        }
+
+        movementVector = GetWalkingSpeed();
 
         this.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
         {
@@ -61,6 +63,35 @@ public class PetMovement : MonoBehaviour
             this.GetComponent<ASL.ASLObject>().SendAndIncrementLocalPosition(movementVector * Time.deltaTime);
             
         });
+    }
+
+    private Vector3 GetWalkingSpeed()
+    {
+        if(isWalking)
+        {
+            if(pet != null)
+            {
+                if(pet.stats["Flight"] != 0)
+                {
+                    return transform.forward * speed;
+                }
+            }
+            // Physics Linecast straight down
+            RaycastHit hitInfo;
+            Vector3 startPos = new Vector3(transform.position.x, transform.position.y + 10, transform.position.z);
+            Vector3 targetPos = new Vector3(transform.position.x, transform.position.y - range, transform.position.z + ((transform.forward * speed).z * 2));
+            if (Physics.Linecast(transform.position, targetPos, out hitInfo))
+            {
+                if (hitInfo.collider != null)
+                {
+                    if (hitInfo.collider.gameObject.name.Contains("PlatformPlane") || hitInfo.collider.gameObject.name.Contains("ARPlane"))
+                    {
+                        return transform.forward * speed;
+                    }
+                }
+            }
+        }
+        return Vector3.zero;
     }
 
     IEnumerator Wander()
