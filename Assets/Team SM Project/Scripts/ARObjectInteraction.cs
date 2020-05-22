@@ -183,8 +183,10 @@ public class ARObjectInteraction : MonoBehaviour
                 // Physics Raycast on touch position
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                 RaycastHit hitObject;
-                // Cast only on colliders within the "Selectable" layer
-                int layerMask = 1 << LayerMask.NameToLayer("Selectable");
+                // Cast only on colliders within the "Selectable" and "Platform" layer
+                int selectMask = 1 << LayerMask.NameToLayer("Selectable");
+                int platformMask = 1 << LayerMask.NameToLayer("Platform");
+                int layerMask = selectMask | platformMask;
 
                 if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
                 {
@@ -192,7 +194,7 @@ public class ARObjectInteraction : MonoBehaviour
                     if (hitObject.collider != null)
                     {
                         // [DEBUG] Show name of hitObject
-                        selectedNameDisplay.text = hitObject.collider.gameObject.name;
+                        //selectedNameDisplay.text = hitObject.collider.gameObject.name;
 
                         // Touch on Platform
                         if (hitObject.collider.gameObject.name.Contains("PlatformPlane"))

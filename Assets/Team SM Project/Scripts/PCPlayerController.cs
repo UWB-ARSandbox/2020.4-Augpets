@@ -22,16 +22,7 @@ public class PCPlayerController : MonoBehaviour
 
     void Awake()
     {
-        // Determine application platform
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-        {
-            playerCamera.gameObject.tag = "MainCamera";
-            GameObject.Destroy(GameObject.Find("AR Camera"));
-        }
-        else
-        {
-            GameObject.Destroy(this.gameObject);
-        }
+
     }
 
     // Start is called before the first frame update
@@ -43,6 +34,17 @@ public class PCPlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         isSprinting = false;
         isMoving = false;
+
+        // Determine application platform
+        /*if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            playerCamera.gameObject.tag = "MainCamera";
+            GameObject.Destroy(GameObject.Find("AR Camera"));
+        }
+        else
+        {
+            GameObject.Destroy(this.gameObject);
+        }*/
     }
 
     // Update is called once per frame
