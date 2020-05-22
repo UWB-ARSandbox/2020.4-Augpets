@@ -86,4 +86,9 @@ public class Inventory : MonoBehaviour
     {
         return playerItems;
     }
+
+    public Item GetItem(int slot)
+    {
+        return playerItems[slot];
+    }
 }

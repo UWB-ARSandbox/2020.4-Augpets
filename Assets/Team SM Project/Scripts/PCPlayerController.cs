@@ -19,17 +19,10 @@ public class PCPlayerController : MonoBehaviour
     private Vector2 smoothLookVector;
     public Transform playerCamera;
     public static Transform ASLObject;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-        playerCamera = this.transform.GetChild(0);
-        lookVector = Vector2.zero;
-        smoothLookVector = Vector2.zero;
-        Cursor.lockState = CursorLockMode.Locked;
-        isSprinting = false;
-        isMoving = false;
 
+    void Awake()
+    {
+        // Determine application platform
         if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
         {
             playerCamera.gameObject.tag = "MainCamera";
@@ -39,6 +32,17 @@ public class PCPlayerController : MonoBehaviour
         {
             GameObject.Destroy(this.gameObject);
         }
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        playerCamera = this.transform.GetChild(0);
+        lookVector = Vector2.zero;
+        smoothLookVector = Vector2.zero;
+        Cursor.lockState = CursorLockMode.Locked;
+        isSprinting = false;
+        isMoving = false;
     }
 
     // Update is called once per frame

@@ -8,6 +8,8 @@ TagManager:
   - AvailableMatches
   - AR Plane
   - Object
+  - Inventory Slot
+  - Pet
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - AR Plane
+  - Selectable
   - 
   - 
   - 

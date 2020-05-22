@@ -76,22 +76,34 @@ public class PetMovement : MonoBehaviour
                     return transform.forward * speed;
                 }
             }
-            // Physics Linecast straight down
-            RaycastHit hitInfo;
-            Vector3 startPos = new Vector3(transform.position.x, transform.position.y + 10, transform.position.z);
-            Vector3 targetPos = new Vector3(transform.position.x, transform.position.y - range, transform.position.z + ((transform.forward * speed).z * 2));
-            if (Physics.Linecast(transform.position, targetPos, out hitInfo))
+            if(IsGrounded())
             {
-                if (hitInfo.collider != null)
-                {
-                    if (hitInfo.collider.gameObject.name.Contains("PlatformPlane") || hitInfo.collider.gameObject.name.Contains("ARPlane"))
-                    {
-                        return transform.forward * speed;
-                    }
-                }
+                return transform.forward * speed;
             }
         }
         return Vector3.zero;
+    }
+
+    private bool IsGrounded()
+    {
+        // Physics Linecast down and at an angle pointing forwards
+        RaycastHit hitInfo;
+        Vector3 startPos = new Vector3(transform.position.x, transform.position.y + 10, transform.position.z);
+        Vector3 targetPos = new Vector3(transform.position.x, transform.position.y - range, transform.position.z + ((transform.forward * speed).z * 2));
+        // Cast only on colliders within the "Selectable" layer
+        int layerMask = 1 << 9;
+
+        if (Physics.Linecast(transform.position, targetPos, out hitInfo, layerMask))
+        {
+            if (hitInfo.collider != null)
+            {
+                if(hitInfo.collider.gameObject.name.Contains("PlatformPlane"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     IEnumerator Wander()

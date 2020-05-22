@@ -25,7 +25,7 @@ public class PlatformController : MonoBehaviour
     }
     private void Awake()
     {
-        objectControls = GameObject.Find("Pets").GetComponent<ARObjectInteraction>();
+        objectControls = GameObject.Find("Pet Manager").GetComponent<ARObjectInteraction>();
         platformControlsToggle = GameObject.Find("PlatformControls").transform.Find("Panel").Find("Toggle").GetComponent<Toggle>();
         verticesOfSelectedPlane = new Vector3[0];
     }
@@ -71,9 +71,10 @@ public class PlatformController : MonoBehaviour
         }
     }
 
-    void CreatePlatform(Vector3[] vertices, Vector3 arPlanePosition, Quaternion arPlaneRotation)
+    public static void CreatePlatform(Vector3[] vertices, Vector3 arPlanePosition, Quaternion arPlaneRotation)
     {
         verticesOfSelectedPlane = vertices;
+        cloudAnchorPose = new Pose(arPlanePosition, arPlaneRotation);
         ASL.ASLHelper.InstanitateASLObject("PlatformPlane", arPlanePosition, arPlaneRotation, "", "", SendMeshVertices, null, UpdateMesh);
     }
 
