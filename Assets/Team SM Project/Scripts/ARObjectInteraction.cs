@@ -17,9 +17,30 @@ public class ARObjectInteraction : MonoBehaviour
 
     public bool interactMode = true;
 
+    // General Buttons
     public Button interactButton;
     public Button removeButton;
 
+    public Button editNameButton;
+    public Button viewStatsButton;
+
+    // Edit Name
+    public GameObject editNameWindow;
+    public Text editNameText;
+    public Button editNameSaveButton;
+    public Button editNameCancelButton;
+
+    // Stats
+    public GameObject statsWindow;
+    public Gradient barGradient;
+    public Slider foodBar;
+    public Slider exerciseBar;
+    public Slider affectionBar;
+    public Image foodFill;
+    public Image exerciseFill;
+    public Image affectionFill;
+
+    // Inventory
     public Inventory inventory;
     public UIInventory inventoryUI;
     private int selectedSlot = 0;        // selected slot
@@ -53,6 +74,10 @@ public class ARObjectInteraction : MonoBehaviour
 
         interactButton.onClick.AddListener(SetInteractMode);
         removeButton.onClick.AddListener(SetRemoveMode);
+        editNameButton.onClick.AddListener(EditName);
+        viewStatsButton.onClick.AddListener(ViewStats);
+        editNameSaveButton.onClick.AddListener(SaveEditName);
+        editNameCancelButton.onClick.AddListener(CancelEditName);
 
         selectedItem = inventory.GetItem(selectedSlot);
         selectedObjectDisplay.text = selectedItem.type;
@@ -69,6 +94,58 @@ public class ARObjectInteraction : MonoBehaviour
     {
         interactMode = false;
         DeselectObject();
+    }
+
+    private void EditName()
+    {
+        if(selectedItem != null)
+        {
+            editNameText.text = "";
+            editNameWindow.SetActive(true);
+        }
+    }
+
+    private void SaveEditName()
+    {
+        if(editNameWindow.activeSelf)
+        {
+            selectedItem.EditName(editNameText.text);
+            selectedNameDisplay.text = selectedItem.name;
+            editNameWindow.SetActive(false);
+        }
+    }
+
+    private void CancelEditName()
+    {
+        if(editNameWindow.activeSelf)
+        {
+            editNameWindow.SetActive(false);
+        }
+    }
+
+    private void ViewStats()
+    {
+        if(selectedItem != null)
+        {
+            CalculateStats();
+            // Activate stats window
+            statsWindow.SetActive(!statsWindow.activeSelf);
+        }
+    }
+
+    private void CalculateStats()
+    {
+        if(selectedItem != null)
+        {
+            // Get value
+            foodBar.value = selectedItem.stats["Food"];
+            exerciseBar.value = selectedItem.stats["Exercise"];
+            affectionBar.value = selectedItem.stats["Affection"];
+            // Set color of bar as normalized slider value converted to gradient
+            foodFill.color = barGradient.Evaluate(foodBar.normalizedValue);
+            exerciseFill.color = barGradient.Evaluate(exerciseBar.normalizedValue);
+            affectionFill.color = barGradient.Evaluate(affectionBar.normalizedValue);
+        }
     }
 
     private void SelectObject(GameObject objectToSelect)
@@ -120,7 +197,7 @@ public class ARObjectInteraction : MonoBehaviour
 
     void Update()
     {
-        if (Input.touchCount > 0 || (IsPCPlayer && Input.GetMouseButton(0)))
+        if ((Input.touchCount > 0 || (IsPCPlayer && Input.GetMouseButton(0))) && !editNameWindow.activeSelf)
         {
             Touch touch;
             int pointerID;
@@ -141,8 +218,8 @@ public class ARObjectInteraction : MonoBehaviour
             }
 
             // Touch on UI
-            if(EventSystem.current.IsPointerOverGameObject(pointerID))
-            {
+            //if(EventSystem.current.IsPointerOverGameObject(pointerID))
+            //{
                 // Graphic Raycast for UI Slot selection
                 pointerEventData = new PointerEventData(EventSystem.current);
                 pointerEventData.position = touchPosition;
@@ -176,10 +253,15 @@ public class ARObjectInteraction : MonoBehaviour
                         }*/
                     }
                 }
-            }
+
+                if(results.Count != 0)
+                {
+                    return;
+                }
+            //}
             // Touch on World
-            else
-            {
+            //else
+            //{
                 // Physics Raycast on touch position
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                 RaycastHit hitObject;
@@ -258,13 +340,19 @@ public class ARObjectInteraction : MonoBehaviour
                         }
                     }
                 }
-            }
+            //}
 
             // Touch released, drop object
             if ((IsPCPlayer && Input.GetMouseButtonUp(0)) || touch.phase == TouchPhase.Ended)
             {
                 DeselectObject();
             }
+        }
+
+        // Update stats in realtime if window is displaying
+        if(statsWindow.activeSelf)
+        {
+            CalculateStats();
         }
     }
 }

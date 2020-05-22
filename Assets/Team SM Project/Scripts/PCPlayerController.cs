@@ -36,7 +36,7 @@ public class PCPlayerController : MonoBehaviour
         isMoving = false;
 
         // Determine application platform
-        /*if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
         {
             playerCamera.gameObject.tag = "MainCamera";
             GameObject.Destroy(GameObject.Find("AR Camera"));
@@ -44,7 +44,7 @@ public class PCPlayerController : MonoBehaviour
         else
         {
             GameObject.Destroy(this.gameObject);
-        }*/
+        }
     }
 
     // Update is called once per frame

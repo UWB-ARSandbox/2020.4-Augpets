@@ -12,15 +12,11 @@ public class Inventory : MonoBehaviour
 
     private void Start()
     {
-        GiveItem("Dog");
-        GiveItem("Cat");
-        GiveItem("Wolf");
-        GiveItem("Eagle");
-        GiveItem("Cow");
-        GiveItem("Pig");
-        GiveItem("Horse");
-        GiveItem("Sheep");
-        GiveItem("Baby Dragon");
+        // Give all Items
+        for(int i = 0; i < itemDatabase.GetNumItems(); i++)
+        {
+            GiveItem(i);
+        }
     }
 
     public void GiveItem(int id)

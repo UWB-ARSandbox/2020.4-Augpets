@@ -112,13 +112,13 @@ public class SurfaceMenuController : MonoBehaviour
             {
                 Touch touch = Input.GetTouch(0);
                 Vector2 touchPosition = touch.position;
-
                 if (touch.phase == TouchPhase.Began && !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
                 {
                     Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                     RaycastHit hitObject;
+                    int platformMask = 1 << LayerMask.NameToLayer("Platform");
 
-                    if (Physics.Raycast(ray, out hitObject, Mathf.Infinity))
+                    if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, platformMask))
                     {
                         if (hitObject.collider != null && hitObject.collider.gameObject.name.Contains("PlatformPlane"))
                         {
@@ -142,20 +142,17 @@ public class SurfaceMenuController : MonoBehaviour
                 {
                     Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                     RaycastHit hitObject;
+                    int platformMask = 1 << LayerMask.NameToLayer("Platform");
 
-                    if (Physics.Raycast(ray, out hitObject, Mathf.Infinity))
+                    if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, platformMask))
                     {
                         if (hitObject.collider != null && hitObject.collider.gameObject.name.Contains("PlatformPlane"))
                         {
-                            Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-                            if(hitPose != null)
+                            Vector3 newPlanePosition = new Vector3(hitObject.point.x, hitObject.collider.transform.position.y, hitObject.point.z);
+                            hitObject.collider.gameObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
                             {
-                                Vector3 newPlanePosition = new Vector3(((Pose)hitPose).position.x, hitObject.collider.transform.position.y, ((Pose)hitPose).position.z);
-                                hitObject.collider.gameObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
-                                {
-                                    hitObject.collider.gameObject.GetComponent<ASL.ASLObject>().SendAndSetWorldPosition(newPlanePosition);
-                                });
-                            }
+                                hitObject.collider.gameObject.GetComponent<ASL.ASLObject>().SendAndSetWorldPosition(newPlanePosition);
+                            });
                         }
                     }
                 }

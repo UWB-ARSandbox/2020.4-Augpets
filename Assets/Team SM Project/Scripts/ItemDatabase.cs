@@ -23,81 +23,134 @@ public class ItemDatabase : MonoBehaviour
         return items.Find(item => item.type == itemName);
     }
 
+    public int GetNumItems()
+    {
+        return items.Count;
+    }
+
     void BuildDatabase()
     {
         items = new List<Item>()
         {
             // Dog
-            new Item(0, "Dog", "Unnamed",
+            new Item(0, "Dog", "Ground", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 0}
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
             }),
             // Cat
-            new Item(1, "Cat", "Unnamed",
+            new Item(1, "Cat", "Ground", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 0}
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
             }),
             // Wolf
-            new Item(2, "Wolf", "Unnamed",
+            new Item(2, "Wolf", "Ground", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 0}
+                {"Food", 5 },
+                {"Exercise", 7 },
+                {"Affection", 3 }
             }),
             // Eagle
-            new Item(3, "Eagle", "Unnamed",
+            new Item(3, "Eagle", "Flight", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 1}
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
             }),
             // Cow
-            new Item(4, "Cow", "Unnamed",
+            new Item(4, "Cow", "Ground", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 0}
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
             }),
             // Pig
-            new Item(5, "Pig", "Unnamed",
+            new Item(5, "Pig", "Ground", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 0}
+                {"Food", 1 },
+                {"Exercise", 1 },
+                {"Affection", 1 }
             }),
             // Horse
-            new Item(6, "Horse", "Unnamed",
+            new Item(6, "Horse", "Ground", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 0}
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
             }),
             // Sheep
-            new Item(7, "Sheep", "Unnamed",
+            new Item(7, "Sheep", "Ground", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 0}
+                {"Food", 0 },
+                {"Exercise", 0 },
+                {"Affection", 0 }
             }),
             // Baby Dragon
-            new Item(8, "Baby Dragon", "Unnamed",
+            new Item(8, "Baby Dragon", "Flight", "Unnamed",
             new Dictionary<string, int>
             {
-                {"Power", 10 },
-                {"Speed", 10 },
-                {"Flight", 1}
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
+            }),
+            // Velociraptor
+            new Item(9, "Velociraptor", "Ground", "Unnamed",
+            new Dictionary<string, int>
+            {
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
+            }),
+            // Tyrannosaurus Rex
+            new Item(10, "Tyrannosaurus Rex", "Ground", "Unnamed",
+            new Dictionary<string, int>
+            {
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
+            }),
+            // Stegosaurus
+            new Item(11, "Stegosaurus", "Ground", "Unnamed",
+            new Dictionary<string, int>
+            {
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
+            }),
+            // Triceratops
+            new Item(12, "Triceratops", "Ground", "Unnamed",
+            new Dictionary<string, int>
+            {
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
+            }),
+            // Apatosaurus
+            new Item(13, "Apatosaurus", "Ground", "Unnamed",
+            new Dictionary<string, int>
+            {
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
+            }), 
+            // Parasaurolophus
+            new Item(14, "Parasaurolophus", "Ground", "Unnamed",
+            new Dictionary<string, int>
+            {
+                {"Food", 10 },
+                {"Exercise", 10 },
+                {"Affection", 10 }
             })
         };
     }

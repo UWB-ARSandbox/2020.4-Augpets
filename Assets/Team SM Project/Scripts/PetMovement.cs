@@ -71,7 +71,7 @@ public class PetMovement : MonoBehaviour
         {
             if(pet != null)
             {
-                if(pet.stats["Flight"] != 0)
+                if(pet.movement == "Flight")
                 {
                     return transform.forward * speed;
                 }
@@ -91,7 +91,9 @@ public class PetMovement : MonoBehaviour
         Vector3 startPos = new Vector3(transform.position.x, transform.position.y + 10, transform.position.z);
         Vector3 targetPos = new Vector3(transform.position.x, transform.position.y - range, transform.position.z + ((transform.forward * speed).z * 2));
         // Cast only on colliders within the "Selectable" layer
-        int layerMask = 1 << 9;
+        int selectMask = 1 << LayerMask.NameToLayer("Selectable");
+        int platformMask = 1 << LayerMask.NameToLayer("Platform");
+        int layerMask = selectMask | platformMask;
 
         if (Physics.Linecast(transform.position, targetPos, out hitInfo, layerMask))
         {
