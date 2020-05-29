@@ -8,6 +8,8 @@ public class PCPlayerController : MonoBehaviour
     public static string STRAFFE_AXIS = "Horizontal";
     public static KeyCode PAUSE_BUTTON = KeyCode.Escape;
     public static KeyCode SPRINT_KEY = KeyCode.LeftShift;
+    public static KeyCode UP_KEY = KeyCode.Space;
+    public static KeyCode DOWN_KEY = KeyCode.LeftControl;
     private static float WALK_SPEED = 2.0f;
     private static float SPRINT_SPEED = 10.0f;
     public float movementSpeed;
@@ -18,6 +20,7 @@ public class PCPlayerController : MonoBehaviour
     public Vector2 lookVector;
     private Vector2 smoothLookVector;
     public Transform playerCamera;
+    public GameObject playerCrosshair;
     public static Transform ASLObject;
 
     void Awake()
@@ -39,6 +42,7 @@ public class PCPlayerController : MonoBehaviour
         isMoving = false;
 
         playerCamera.gameObject.tag = "MainCamera";
+        playerCrosshair.SetActive(true);
     }
 
     // Update is called once per frame

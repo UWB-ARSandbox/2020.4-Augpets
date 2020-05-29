@@ -47,6 +47,8 @@ public class ARObjectInteraction : MonoBehaviour
     public Text ownerText;
 
     // Inventory
+    private const int INVENTORY_ROW_WIDTH = 4;
+    public Toggle backpack;
     public Inventory inventory;
     public UIInventory inventoryUI;
     private int selectedSlot = 0;        // selected slot
@@ -56,11 +58,19 @@ public class ARObjectInteraction : MonoBehaviour
     public Text selectedObjectDisplay;
     public Text selectedNameDisplay;
     public Image selectedSlotDisplay;
+
+    // PC Player
+    public static KeyCode INVENTORY_KEY = KeyCode.Tab;
+    public static KeyCode INVENTORY_UP_KEY = KeyCode.UpArrow;
+    public static KeyCode INVENTORY_DOWN_KEY = KeyCode.DownArrow;
+    public static KeyCode INVENTORY_LEFT_KEY = KeyCode.LeftArrow;
+    public static KeyCode INVENTORY_RIGHT_KEY = KeyCode.RightArrow;
+    public Image PCCrosshair;
     public static bool IsPCPlayer
     {
         get
         {
-            return (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor);
+            return (Application.platform != RuntimePlatform.Android);
         }
     }
 
@@ -190,6 +200,32 @@ public class ARObjectInteraction : MonoBehaviour
         }
     }
 
+    private void SelectSlot(int slot)
+    {
+        DeselectObject();
+        // Set slot to 0 if negative
+        if(slot < 0)
+        {
+            slot = 0;
+        }
+        // Set slot to max if greater than max
+        if(slot > inventory.GetItemList().Count - 1)
+        {
+            slot = inventory.GetItemList().Count - 1;
+        }
+
+        // Select slot and get item
+        selectedSlot = slot;
+        selectedItem = inventory.GetItem(selectedSlot);
+
+        // Display name and type of selected pet
+        selectedObjectDisplay.text = selectedItem.type;
+        selectedNameDisplay.text = selectedItem.name;
+
+        // Move selected UI outline
+        selectedSlotDisplay.transform.position = inventoryUI.GetUIItemList()[selectedSlot].gameObject.transform.position;
+    }
+
     private void DeselectObject()
     {
         if (selectedObject != null)
@@ -263,16 +299,8 @@ public class ARObjectInteraction : MonoBehaviour
                     // Deselect any currently selected object
                     //DeselectObject();
 
-                    // Get slot as an index to get the Item from the Inventory array
-                    selectedSlot = inventoryUI.GetUIItemList().IndexOf(result.gameObject.GetComponent<UIItem>());
-                    selectedItem = inventory.GetItem(selectedSlot);
-
-                    // Display name and type of selected pet
-                    selectedObjectDisplay.text = selectedItem.type;
-                    selectedNameDisplay.text = selectedItem.name;
-
-                    // Move selected UI outline
-                    selectedSlotDisplay.transform.position = result.gameObject.transform.position;
+                    // Select Slot
+                    SelectSlot(inventoryUI.GetUIItemList().IndexOf(result.gameObject.GetComponent<UIItem>()));
 
                     // If pet is already placed, select the pet in the world
                     /*if(selectedItem.placed)
@@ -310,15 +338,26 @@ public class ARObjectInteraction : MonoBehaviour
                                 // Place Object - No Object Selected
                                 if(selectedObject == null)
                                 {
-                                    // Instantiate new object
-                                    Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-                                    if (hitPose != null)
+                                    if(IsPCPlayer)
                                     {
                                         if(!inventory.GetItem(selectedSlot).placed)
                                         {
-                                            // Place object
-                                            ASL.ASLHelper.InstanitateASLObject(inventory.GetItem(selectedSlot).type, (((Pose)hitPose).position), (((Pose)hitPose).rotation));
+                                            ASL.ASLHelper.InstanitateASLObject(inventory.GetItem(selectedSlot).type, hitObject.point, Quaternion.identity);
                                             inventory.PlaceItem(inventory.GetItem(selectedSlot).id);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Instantiate new object
+                                        Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
+                                        if (hitPose != null)
+                                        {
+                                            if(!inventory.GetItem(selectedSlot).placed)
+                                            {
+                                                // Place object
+                                                ASL.ASLHelper.InstanitateASLObject(inventory.GetItem(selectedSlot).type, (((Pose)hitPose).position), (((Pose)hitPose).rotation));
+                                                inventory.PlaceItem(inventory.GetItem(selectedSlot).id);
+                                            }
                                         }
                                     }
                                 }
@@ -338,10 +377,24 @@ public class ARObjectInteraction : MonoBehaviour
                                 // Move Object - Object Currently Selected
                                 else
                                 {
-                                    Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-                                    if (hitPose != null)
+                                    if(IsPCPlayer)
                                     {
-                                        selectedObject.transform.position = ((Pose)hitPose).position;
+                                        RaycastHit hitObjectPC;
+                                        if (Physics.Raycast(ray, out hitObjectPC, Mathf.Infinity, platformMask))
+                                        {
+                                            if(hitObjectPC.collider != null)
+                                            {
+                                                selectedObject.transform.position = hitObjectPC.point;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
+                                        if (hitPose != null)
+                                        {
+                                            selectedObject.transform.position = ((Pose)hitPose).position;
+                                        }
                                     }
                                 }
                             }
@@ -366,7 +419,7 @@ public class ARObjectInteraction : MonoBehaviour
             }
 
             // Touch released, drop object
-            if ((IsPCPlayer && Input.GetMouseButtonUp(0)) || touch.phase == TouchPhase.Ended)
+            if (touch.phase == TouchPhase.Ended)
             {
                 DeselectObject();
             }
@@ -376,6 +429,72 @@ public class ARObjectInteraction : MonoBehaviour
         if(statsWindow.activeSelf)
         {
             CalculateStats();
+        }
+
+        // PC UI Controls
+        if(IsPCPlayer)
+        {
+            // Highlight PC crosshair when hovering over selectable object
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hitObject;
+            int selectMask = 1 << LayerMask.NameToLayer("Selectable");
+            if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, selectMask))
+            {
+                if(hitObject.collider != null)
+                {
+                    PCCrosshair.color = Color.yellow;
+                    // Right click to pickup object
+                    if(Input.GetMouseButtonDown(1))
+                    {
+                        // Pickup Object - No Object Selected
+                        if(selectedObject == null)
+                        {
+                            // Pickup object
+                            PickupObject(hitObject.collider.gameObject);
+                        }
+                        // Pickup Selected Object - Object Currently Selected
+                        else
+                        {
+                            PickupObject(selectedObject);
+                        }
+                    }
+                }
+                PCCrosshair.color = Color.yellow;
+            }
+            else
+            {
+                PCCrosshair.color = Color.white;
+            }
+
+            // Open Backpack with INVENTORY_KEY
+            if(Input.GetKeyDown(INVENTORY_KEY))
+            {
+                backpack.isOn = !backpack.isOn;
+            }
+
+            // Navigate Backpack with INVENTORY_UP/DOWN/LEFT/RIGHT_KEY
+            if(Input.GetKeyDown(INVENTORY_UP_KEY))
+            {
+                SelectSlot(selectedSlot - INVENTORY_ROW_WIDTH);
+            }
+            else if(Input.GetKeyDown(INVENTORY_DOWN_KEY))
+            {
+                SelectSlot(selectedSlot + INVENTORY_ROW_WIDTH);
+            }
+            else if(Input.GetKeyDown(INVENTORY_RIGHT_KEY))
+            {
+                SelectSlot(selectedSlot + 1);
+            }
+            else if(Input.GetKeyDown(INVENTORY_LEFT_KEY))
+            {
+                SelectSlot(selectedSlot - 1);
+            }
+
+            // Deselect if left click is released
+            if(Input.GetMouseButtonUp(0))
+            {
+                DeselectObject();
+            }
         }
     }
 }
