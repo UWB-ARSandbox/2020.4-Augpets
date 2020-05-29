@@ -39,6 +39,7 @@ public class ARObjectInteraction : MonoBehaviour
     public Image foodFill;
     public Image exerciseFill;
     public Image affectionFill;
+    public Text ownerText;
 
     // Inventory
     public Inventory inventory;
@@ -46,12 +47,10 @@ public class ARObjectInteraction : MonoBehaviour
     private int selectedSlot = 0;        // selected slot
     public Item selectedItem;           // item in selected slot
 
+    private string username;
     public Text selectedObjectDisplay;
     public Text selectedNameDisplay;
     public Image selectedSlotDisplay;
-
-    //public GameObject[] placedPets;
-
     public static bool IsPCPlayer
     {
         get
@@ -60,11 +59,9 @@ public class ARObjectInteraction : MonoBehaviour
         }
     }
 
-    //private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
-
     private void Awake()
     {
-
+        username = ASL.GameLiftManager.GetInstance().m_Username;
     }
 
     private void Start()
@@ -145,6 +142,8 @@ public class ARObjectInteraction : MonoBehaviour
             foodFill.color = barGradient.Evaluate(foodBar.normalizedValue);
             exerciseFill.color = barGradient.Evaluate(exerciseBar.normalizedValue);
             affectionFill.color = barGradient.Evaluate(affectionBar.normalizedValue);
+            // Set owner
+            ownerText.text = "Owner: " + selectedItem.owner;
         }
     }
 
@@ -184,13 +183,16 @@ public class ARObjectInteraction : MonoBehaviour
     {
         if (objectToPickup != null)
         {
-            // Destroy if instantiated prefab
+            // Delete if instantiated prefab
             if(objectToPickup.name.Contains("(Clone)"))
             {
                 string type = objectToPickup.name.Remove(objectToPickup.name.IndexOf("(Clone)"), 7);
                 // Remove object and put back in inventory
                 inventory.PickupItem(inventory.CheckForItem(type).id);
-                Destroy(objectToPickup);
+                objectToPickup.gameObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+                {
+                    objectToPickup.gameObject.GetComponent<ASL.ASLObject>().DeleteObject();
+                });
             }
         }
     }
@@ -217,51 +219,43 @@ public class ARObjectInteraction : MonoBehaviour
                 pointerID = touch.fingerId;
             }
 
+            // Graphic Raycast for UI Slot selection
+            pointerEventData = new PointerEventData(EventSystem.current);
+            pointerEventData.position = touchPosition;
+            List<RaycastResult> results = new List<RaycastResult>();
+            raycaster.Raycast(pointerEventData, results);
+
             // Touch on UI
-            //if(EventSystem.current.IsPointerOverGameObject(pointerID))
-            //{
-                // Graphic Raycast for UI Slot selection
-                pointerEventData = new PointerEventData(EventSystem.current);
-                pointerEventData.position = touchPosition;
-                List<RaycastResult> results = new List<RaycastResult>();
-
-                raycaster.Raycast(pointerEventData, results);
-                foreach (RaycastResult result in results)
+            foreach (RaycastResult result in results)
+            {
+                // Raycasted Object has UI Item Component
+                if(result.gameObject.GetComponent<UIItem>() != null)
                 {
-                    // Raycasted Object has UI Item Component
-                    if(result.gameObject.GetComponent<UIItem>() != null)
+                    // Deselect any currently selected object
+                    //DeselectObject();
+
+                    // Get slot as an index to get the Item from the Inventory array
+                    selectedSlot = inventoryUI.GetUIItemList().IndexOf(result.gameObject.GetComponent<UIItem>());
+                    selectedItem = inventory.GetItem(selectedSlot);
+
+                    // Display name and type of selected pet
+                    selectedObjectDisplay.text = selectedItem.type;
+                    selectedNameDisplay.text = selectedItem.name;
+
+                    // Move selected UI outline
+                    selectedSlotDisplay.transform.position = result.gameObject.transform.position;
+
+                    // If pet is already placed, select the pet in the world
+                    /*if(selectedItem.placed)
                     {
-                        // Deselect any currently selected object
-                        //DeselectObject();
-
-                        // Get slot as an index to get the Item from the Inventory array
-                        selectedSlot = inventoryUI.GetUIItemList().IndexOf(result.gameObject.GetComponent<UIItem>());
-                        selectedItem = inventory.GetItem(selectedSlot);
-
-                        // Display name and type of selected pet
-                        selectedObjectDisplay.text = selectedItem.type;
-                        selectedNameDisplay.text = selectedItem.name;
-
-                        // Move selected UI outline
-                        selectedSlotDisplay.transform.position = result.gameObject.transform.position;
-
-                        // If pet is already placed, select the pet in the world
-                        /*if(selectedItem.placed)
-                        {
-                            string searchName = selectedItem.type + "(Clone)";
-                            SelectObject(GameObject.Find(searchName));
-                        }*/
-                    }
+                        string searchName = selectedItem.type + "(Clone)";
+                        SelectObject(GameObject.Find(searchName));
+                    }*/
                 }
-
-                if(results.Count != 0)
-                {
-                    return;
-                }
-            //}
+            }
             // Touch on World
-            //else
-            //{
+            if(results.Count == 0)
+            {
                 // Physics Raycast on touch position
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
                 RaycastHit hitObject;
@@ -340,7 +334,7 @@ public class ARObjectInteraction : MonoBehaviour
                         }
                     }
                 }
-            //}
+            }
 
             // Touch released, drop object
             if ((IsPCPlayer && Input.GetMouseButtonUp(0)) || touch.phase == TouchPhase.Ended)

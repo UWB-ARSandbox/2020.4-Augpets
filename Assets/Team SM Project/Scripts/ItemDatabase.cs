@@ -8,8 +8,16 @@ public class ItemDatabase : MonoBehaviour
 {
     public List<Item> items = new List<Item>();
 
+    private string unnamed = "Unnamed";
+    private string owner;
+
+    private const string land = "Land";
+    private const string aerial = "Aerial";
+    private const string aquatic = "Aquatic";
+
     private void Awake()
     {
+        owner = ASL.GameLiftManager.GetInstance().m_Username;
         BuildDatabase();
     }
 
@@ -33,7 +41,7 @@ public class ItemDatabase : MonoBehaviour
         items = new List<Item>()
         {
             // Dog
-            new Item(0, "Dog", "Ground", "Unnamed",
+            new Item(0, "Dog", land, unnamed, owner, 
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -41,7 +49,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Cat
-            new Item(1, "Cat", "Ground", "Unnamed",
+            new Item(1, "Cat", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -49,7 +57,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Wolf
-            new Item(2, "Wolf", "Ground", "Unnamed",
+            new Item(2, "Wolf", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 5 },
@@ -57,7 +65,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 3 }
             }),
             // Eagle
-            new Item(3, "Eagle", "Flight", "Unnamed",
+            new Item(3, "Eagle", aerial, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -65,7 +73,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Cow
-            new Item(4, "Cow", "Ground", "Unnamed",
+            new Item(4, "Cow", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -73,7 +81,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Pig
-            new Item(5, "Pig", "Ground", "Unnamed",
+            new Item(5, "Pig", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 1 },
@@ -81,7 +89,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 1 }
             }),
             // Horse
-            new Item(6, "Horse", "Ground", "Unnamed",
+            new Item(6, "Horse", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -89,7 +97,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Sheep
-            new Item(7, "Sheep", "Ground", "Unnamed",
+            new Item(7, "Sheep", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 0 },
@@ -97,7 +105,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 0 }
             }),
             // Baby Dragon
-            new Item(8, "Baby Dragon", "Flight", "Unnamed",
+            new Item(8, "Baby Dragon", aerial, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -105,7 +113,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Velociraptor
-            new Item(9, "Velociraptor", "Ground", "Unnamed",
+            new Item(9, "Velociraptor", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -113,7 +121,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Tyrannosaurus Rex
-            new Item(10, "Tyrannosaurus Rex", "Ground", "Unnamed",
+            new Item(10, "Tyrannosaurus Rex", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -121,7 +129,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Stegosaurus
-            new Item(11, "Stegosaurus", "Ground", "Unnamed",
+            new Item(11, "Stegosaurus", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -129,7 +137,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Triceratops
-            new Item(12, "Triceratops", "Ground", "Unnamed",
+            new Item(12, "Triceratops", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -137,7 +145,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }),
             // Apatosaurus
-            new Item(13, "Apatosaurus", "Ground", "Unnamed",
+            new Item(13, "Apatosaurus", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -145,7 +153,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Affection", 10 }
             }), 
             // Parasaurolophus
-            new Item(14, "Parasaurolophus", "Ground", "Unnamed",
+            new Item(14, "Parasaurolophus", land, unnamed, owner,
             new Dictionary<string, int>
             {
                 {"Food", 10 },

@@ -71,7 +71,7 @@ public class PetMovement : MonoBehaviour
         {
             if(pet != null)
             {
-                if(pet.movement == "Flight")
+                if(pet.movement == "Aerial")
                 {
                     return transform.forward * speed;
                 }
