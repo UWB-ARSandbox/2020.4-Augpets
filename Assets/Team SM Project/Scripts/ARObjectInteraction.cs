@@ -20,6 +20,7 @@ public class ARObjectInteraction : MonoBehaviour
     // General Buttons
     public Button interactButton;
     public Button removeButton;
+    public Image selectedModeDisplay;
 
     public Button editNameButton;
     public Button viewStatsButton;
@@ -31,6 +32,7 @@ public class ARObjectInteraction : MonoBehaviour
 
     // Edit Name
     public GameObject editNameWindow;
+    public InputField editNameInput;
     public Text editNameText;
     public Button editNameSaveButton;
     public Button editNameCancelButton;
@@ -65,6 +67,12 @@ public class ARObjectInteraction : MonoBehaviour
     public static KeyCode INVENTORY_DOWN_KEY = KeyCode.DownArrow;
     public static KeyCode INVENTORY_LEFT_KEY = KeyCode.LeftArrow;
     public static KeyCode INVENTORY_RIGHT_KEY = KeyCode.RightArrow;
+    public static KeyCode INTERACT_MODE_KEY = KeyCode.Alpha1;
+    public static KeyCode PICKUP_MODE_KEY = KeyCode.Alpha2;
+    public static KeyCode EDIT_NAME_KEY = KeyCode.Alpha3;
+    public static KeyCode VIEW_STATS_KEY = KeyCode.Alpha4;
+    public static KeyCode OK_KEY = KeyCode.Return;
+    public static KeyCode CANCEL_KEY = KeyCode.Delete;
     public Image PCCrosshair;
     public static bool IsPCPlayer
     {
@@ -101,12 +109,14 @@ public class ARObjectInteraction : MonoBehaviour
     private void SetInteractMode()
     {
         interactMode = true;
+        selectedModeDisplay.transform.position = interactButton.gameObject.transform.position;
         DeselectObject();
     }
 
     private void SetRemoveMode()
     {
         interactMode = false;
+        selectedModeDisplay.transform.position = removeButton.gameObject.transform.position;
         DeselectObject();
     }
 
@@ -114,14 +124,15 @@ public class ARObjectInteraction : MonoBehaviour
     {
         if(selectedItem != null)
         {
-            editNameText.text = "";
+            editNameInput.text = "";
             editNameWindow.SetActive(true);
+            editNameInput.ActivateInputField();
         }
     }
 
     private void SaveEditName()
     {
-        if(editNameWindow.activeSelf)
+        if(editNameWindow.activeSelf && editNameText.text != "")
         {
             selectedItem.EditName(editNameText.text);
             selectedNameDisplay.text = selectedItem.name;
@@ -237,6 +248,15 @@ public class ARObjectInteraction : MonoBehaviour
         }
     }
 
+    private void PlaceObject(string prefabName, Vector3 pos)
+    {
+        if(!inventory.GetItem(selectedSlot).placed)
+        {
+            ASL.ASLHelper.InstanitateASLObject(prefabName, pos, Quaternion.identity);
+            inventory.PlaceItem(inventory.GetItem(selectedSlot).id);
+        }
+    }
+
     private void PickupObject(GameObject objectToPickup)
     {
         if (objectToPickup != null)
@@ -264,6 +284,7 @@ public class ARObjectInteraction : MonoBehaviour
 
     void Update()
     {
+        // Touch/Click occurs and UI window is not currently up
         if ((Input.touchCount > 0 || (IsPCPlayer && Input.GetMouseButton(0))) && !editNameWindow.activeSelf && !notificationWindow.activeSelf)
         {
             Touch touch;
@@ -296,122 +317,64 @@ public class ARObjectInteraction : MonoBehaviour
                 // Raycasted Object has UI Item Component
                 if(result.gameObject.GetComponent<UIItem>() != null)
                 {
-                    // Deselect any currently selected object
-                    //DeselectObject();
-
                     // Select Slot
                     SelectSlot(inventoryUI.GetUIItemList().IndexOf(result.gameObject.GetComponent<UIItem>()));
-
-                    // If pet is already placed, select the pet in the world
-                    /*if(selectedItem.placed)
-                    {
-                        string searchName = selectedItem.type + "(Clone)";
-                        SelectObject(GameObject.Find(searchName));
-                    }*/
                 }
             }
             // Touch on World
             if(results.Count == 0)
             {
-                // Physics Raycast on touch position
+                // Physics Raycasts on touch position
                 Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-                RaycastHit hitObject;
-                // Cast only on colliders within the "Selectable" and "Platform" layer
-                int selectMask = 1 << LayerMask.NameToLayer("Selectable");
+                RaycastHit hitPlatform;
+                // Platform Raycast
                 int platformMask = 1 << LayerMask.NameToLayer("Platform");
-                int layerMask = selectMask | platformMask;
-
-                if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, layerMask))
+                if (Physics.Raycast(ray, out hitPlatform, Mathf.Infinity, platformMask))
                 {
-                    // Raycast hit
-                    if (hitObject.collider != null)
+                    // Raycast hit a collider
+                    if (hitPlatform.collider != null)
                     {
-                        // [DEBUG] Show name of hitObject
-                        //selectedNameDisplay.text = hitObject.collider.gameObject.name;
-
-                        // Touch on Platform
-                        if (hitObject.collider.gameObject.name.Contains("PlatformPlane"))
+                        // Interact Mode
+                        if(interactMode)
                         {
-                            // Interact Mode
-                            if(interactMode)
+                            // Place Object - No Object Selected
+                            if(selectedObject == null)
                             {
-                                // Place Object - No Object Selected
-                                if(selectedObject == null)
-                                {
-                                    if(IsPCPlayer)
-                                    {
-                                        if(!inventory.GetItem(selectedSlot).placed)
-                                        {
-                                            ASL.ASLHelper.InstanitateASLObject(inventory.GetItem(selectedSlot).type, hitObject.point, Quaternion.identity);
-                                            inventory.PlaceItem(inventory.GetItem(selectedSlot).id);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // Instantiate new object
-                                        Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-                                        if (hitPose != null)
-                                        {
-                                            if(!inventory.GetItem(selectedSlot).placed)
-                                            {
-                                                // Place object
-                                                ASL.ASLHelper.InstanitateASLObject(inventory.GetItem(selectedSlot).type, (((Pose)hitPose).position), (((Pose)hitPose).rotation));
-                                                inventory.PlaceItem(inventory.GetItem(selectedSlot).id);
-                                            }
-                                        }
-                                    }
-                                }
+                                PlaceObject(inventory.GetItem(selectedSlot).type, hitPlatform.point);
                             }
-                        }
-                        // Touch on Object
-                        else
-                        {
-                            // Interact Mode
-                            if(interactMode)
-                            {
-                                // Select Object - No Object Selected
-                                if (selectedObject == null)
-                                {
-                                    SelectObject(hitObject.collider.gameObject);
-                                }
-                                // Move Object - Object Currently Selected
-                                else
-                                {
-                                    if(IsPCPlayer)
-                                    {
-                                        RaycastHit hitObjectPC;
-                                        if (Physics.Raycast(ray, out hitObjectPC, Mathf.Infinity, platformMask))
-                                        {
-                                            if(hitObjectPC.collider != null)
-                                            {
-                                                selectedObject.transform.position = hitObjectPC.point;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Pose? hitPose = ASL.ARWorldOriginHelper.GetInstance().Raycast(touchPosition);
-                                        if (hitPose != null)
-                                        {
-                                            selectedObject.transform.position = ((Pose)hitPose).position;
-                                        }
-                                    }
-                                }
-                            }
-                            // Pickup Mode
+                            // Move Selected Object
                             else
                             {
-                                // Pickup Object - No Object Selected
-                                if(selectedObject == null)
-                                {
-                                    // Pickup object
-                                    PickupObject(hitObject.collider.gameObject);
-                                }
-                                // Pickup Selected Object - Object Currently Selected
-                                else
-                                {
-                                    PickupObject(selectedObject);
-                                }
+                                selectedObject.transform.position = hitPlatform.point;
+                            }
+                        }
+                    }
+                }
+
+                // Selectable Raycast
+                RaycastHit hitObject;
+                int selectMask = 1 << LayerMask.NameToLayer("Selectable");
+                if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, selectMask))
+                {
+                    // Raycast hit a collider
+                    if (hitObject.collider != null)
+                    {
+                        // Interact Mode
+                        if(interactMode)
+                        {
+                            // Select Object - No Object Selected
+                            if (selectedObject == null)
+                            {
+                                SelectObject(hitObject.collider.gameObject);
+                            }
+                        }
+                        // Pickup Mode
+                        else
+                        {
+                            // Pickup Object - No Object Selected
+                            if(selectedObject == null)
+                            {
+                                PickupObject(hitObject.collider.gameObject);
                             }
                         }
                     }
@@ -431,12 +394,13 @@ public class ARObjectInteraction : MonoBehaviour
             CalculateStats();
         }
 
-        // PC UI Controls
+        // PC-specific
         if(IsPCPlayer)
         {
             // Highlight PC crosshair when hovering over selectable object
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hitObject;
+            // Raycast only on "Selectable" layer
             int selectMask = 1 << LayerMask.NameToLayer("Selectable");
             if (Physics.Raycast(ray, out hitObject, Mathf.Infinity, selectMask))
             {
@@ -449,7 +413,6 @@ public class ARObjectInteraction : MonoBehaviour
                         // Pickup Object - No Object Selected
                         if(selectedObject == null)
                         {
-                            // Pickup object
                             PickupObject(hitObject.collider.gameObject);
                         }
                         // Pickup Selected Object - Object Currently Selected
@@ -490,7 +453,36 @@ public class ARObjectInteraction : MonoBehaviour
                 SelectSlot(selectedSlot - 1);
             }
 
-            // Deselect if left click is released
+            // Button Hotkeys with 1/2/3/4
+            if(Input.GetKeyDown(INTERACT_MODE_KEY))
+            {
+                SetInteractMode();
+            }
+            else if(Input.GetKeyDown(PICKUP_MODE_KEY))
+            {
+                SetRemoveMode();
+            }
+            else if(Input.GetKeyDown(EDIT_NAME_KEY))
+            {
+                EditName();
+            }
+            else if(Input.GetKeyDown(VIEW_STATS_KEY))
+            {
+                ViewStats();
+            }
+
+            // OK/Cancel Hotkey with Enter/Delete
+            if(Input.GetKeyDown(OK_KEY))
+            {
+                SaveEditName();
+                AcknowledgeNotification();
+            }
+            else if(Input.GetKeyDown(CANCEL_KEY))
+            {
+                CancelEditName();
+            }
+
+            // Left click released, drop object
             if(Input.GetMouseButtonUp(0))
             {
                 DeselectObject();
