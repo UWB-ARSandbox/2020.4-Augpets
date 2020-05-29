@@ -226,6 +226,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1458031746034509450}
   - component: {fileID: 7357624024941427402}
+  - component: {fileID: 7401073324357973016}
   - component: {fileID: 7075386990729521314}
   m_Layer: 9
   m_Name: Eagle
@@ -262,6 +263,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7401073324357973016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2477157903224001689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd3825c9474ac204da1e6316ad52d2c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory: {fileID: 0}
 --- !u!65 &7075386990729521314
 BoxCollider:
   m_ObjectHideFlags: 0

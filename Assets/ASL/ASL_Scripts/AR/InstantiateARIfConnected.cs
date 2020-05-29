@@ -15,7 +15,7 @@ namespace ASL
             //If the user is connected, then spawn AR camera objects
             if (FindObjectOfType<GameLiftManager>() != null && ASL.GameLiftManager.GetInstance() != null && ASL.GameLiftManager.GetInstance().m_Client.ConnectedAndReady)
             {
-                Instantiate(Resources.Load("ASL_Prefabs/ARFoundationPrefabs/ARHolder"), Vector3.zero, Quaternion.identity);
+                Instantiate(Resources.Load("ASL_Prefabs/ARFoundationPrefabs/ARHolderWithPC"), Vector3.zero, Quaternion.identity);
 
                 /*if(Application.isEditor)
                 {

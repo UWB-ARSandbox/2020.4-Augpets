@@ -24,6 +24,11 @@ public class ARObjectInteraction : MonoBehaviour
     public Button editNameButton;
     public Button viewStatsButton;
 
+    // Notification
+    public GameObject notificationWindow;
+    public Button okButton;
+    public Text notification;
+
     // Edit Name
     public GameObject editNameWindow;
     public Text editNameText;
@@ -69,12 +74,14 @@ public class ARObjectInteraction : MonoBehaviour
         _arSessionOrigin = GameObject.Find("AR Session Origin");
         _arRaycastManager = _arSessionOrigin.GetComponent<ARRaycastManager>();
 
+        // Buttons
         interactButton.onClick.AddListener(SetInteractMode);
         removeButton.onClick.AddListener(SetRemoveMode);
         editNameButton.onClick.AddListener(EditName);
         viewStatsButton.onClick.AddListener(ViewStats);
         editNameSaveButton.onClick.AddListener(SaveEditName);
         editNameCancelButton.onClick.AddListener(CancelEditName);
+        okButton.onClick.AddListener(AcknowledgeNotification);
 
         selectedItem = inventory.GetItem(selectedSlot);
         selectedObjectDisplay.text = selectedItem.type;
@@ -120,6 +127,23 @@ public class ARObjectInteraction : MonoBehaviour
         }
     }
 
+    private void NotifyUser(string text)
+    {
+        if(!notificationWindow.activeSelf)
+        {
+            notification.text = text;
+            notificationWindow.SetActive(true);
+        }
+    }
+
+    private void AcknowledgeNotification()
+    {
+        if(notificationWindow.activeSelf)
+        {
+            notificationWindow.SetActive(false);
+        }
+    }
+
     private void ViewStats()
     {
         if(selectedItem != null)
@@ -153,12 +177,10 @@ public class ARObjectInteraction : MonoBehaviour
         selectedObject = objectToSelect;
         if (selectedObject != null)
         {
-            if(objectToSelect.name.Contains("(Clone)"))
+            if(objectToSelect.GetComponent<PetInfo>() != null)
             {
-                // Display name of selected object
-                string type = objectToSelect.name.Remove(objectToSelect.name.IndexOf("(Clone)"), 7);
-                selectedObjectDisplay.text = type;
-                selectedNameDisplay.text = inventory.CheckForItem(type).name;
+                selectedObjectDisplay.text = objectToSelect.GetComponent<PetInfo>().GetItem().type;
+                selectedNameDisplay.text = objectToSelect.GetComponent<PetInfo>().GetItem().name;
             }
             else
             {
@@ -183,23 +205,30 @@ public class ARObjectInteraction : MonoBehaviour
     {
         if (objectToPickup != null)
         {
-            // Delete if instantiated prefab
-            if(objectToPickup.name.Contains("(Clone)"))
+            if(objectToPickup.GetComponent<PetInfo>() != null)
             {
-                string type = objectToPickup.name.Remove(objectToPickup.name.IndexOf("(Clone)"), 7);
-                // Remove object and put back in inventory
-                inventory.PickupItem(inventory.CheckForItem(type).id);
-                objectToPickup.gameObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+                // Only pickup if user is the owner
+                if(objectToPickup.GetComponent<PetInfo>().GetItem().owner == username)
                 {
-                    objectToPickup.gameObject.GetComponent<ASL.ASLObject>().DeleteObject();
-                });
+                    // Remove object and put back in inventory
+                    inventory.PickupItem(inventory.CheckForItem(objectToPickup.GetComponent<PetInfo>().GetItem().type).id);
+                    objectToPickup.gameObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+                    {
+                        objectToPickup.gameObject.GetComponent<ASL.ASLObject>().DeleteObject();
+                    });
+                }
+                // Display notification to user
+                else
+                {
+                    NotifyUser("Cannot remove a pet you do not own.");
+                }
             }
         }
     }
 
     void Update()
     {
-        if ((Input.touchCount > 0 || (IsPCPlayer && Input.GetMouseButton(0))) && !editNameWindow.activeSelf)
+        if ((Input.touchCount > 0 || (IsPCPlayer && Input.GetMouseButton(0))) && !editNameWindow.activeSelf && !notificationWindow.activeSelf)
         {
             Touch touch;
             int pointerID;
