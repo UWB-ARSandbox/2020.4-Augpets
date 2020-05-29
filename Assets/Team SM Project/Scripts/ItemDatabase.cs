@@ -46,7 +46,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 2}
             }),
             // Cat
             new Item(1, "Cat", land, unnamed, owner,
@@ -54,7 +55,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 2}
             }),
             // Wolf
             new Item(2, "Wolf", land, unnamed, owner,
@@ -62,7 +64,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 5 },
                 {"Exercise", 7 },
-                {"Affection", 3 }
+                {"Affection", 3 },
+                {"Speed", 2}
             }),
             // Eagle
             new Item(3, "Eagle", aerial, unnamed, owner,
@@ -70,7 +73,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 3}
             }),
             // Cow
             new Item(4, "Cow", land, unnamed, owner,
@@ -78,7 +82,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 1}
             }),
             // Pig
             new Item(5, "Pig", land, unnamed, owner,
@@ -86,7 +91,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 1 },
                 {"Exercise", 1 },
-                {"Affection", 1 }
+                {"Affection", 1 },
+                {"Speed", 1}
             }),
             // Horse
             new Item(6, "Horse", land, unnamed, owner,
@@ -94,7 +100,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 5}
             }),
             // Sheep
             new Item(7, "Sheep", land, unnamed, owner,
@@ -102,7 +109,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 0 },
                 {"Exercise", 0 },
-                {"Affection", 0 }
+                {"Affection", 0 },
+                {"Speed", 2}
             }),
             // Baby Dragon
             new Item(8, "Baby Dragon", aerial, unnamed, owner,
@@ -110,7 +118,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 4}
             }),
             // Velociraptor
             new Item(9, "Velociraptor", land, unnamed, owner,
@@ -118,7 +127,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 4}
             }),
             // Tyrannosaurus Rex
             new Item(10, "Tyrannosaurus Rex", land, unnamed, owner,
@@ -126,7 +136,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 2}
             }),
             // Stegosaurus
             new Item(11, "Stegosaurus", land, unnamed, owner,
@@ -134,7 +145,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 1}
             }),
             // Triceratops
             new Item(12, "Triceratops", land, unnamed, owner,
@@ -142,7 +154,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 1}
             }),
             // Apatosaurus
             new Item(13, "Apatosaurus", land, unnamed, owner,
@@ -150,7 +163,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 1}
             }), 
             // Parasaurolophus
             new Item(14, "Parasaurolophus", land, unnamed, owner,
@@ -158,7 +172,8 @@ public class ItemDatabase : MonoBehaviour
             {
                 {"Food", 10 },
                 {"Exercise", 10 },
-                {"Affection", 10 }
+                {"Affection", 10 },
+                {"Speed", 1}
             })
         };
     }

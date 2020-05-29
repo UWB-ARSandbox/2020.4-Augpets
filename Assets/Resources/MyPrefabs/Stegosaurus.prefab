@@ -903,9 +903,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 665878623962376050}
-  - component: {fileID: 1980732389006085846}
   - component: {fileID: -8979978656173226919}
   - component: {fileID: 285903156936159788}
+  - component: {fileID: -5792381934088020876}
   m_Layer: 9
   m_Name: Stegosaurus
   m_TagString: Pet
@@ -929,18 +929,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1980732389006085846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4568608030959818081}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-8979978656173226919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -967,6 +955,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.747685, y: 8.64795, z: 13.217574}
   m_Center: {x: 0.071128584, y: 3.823973, z: 0.7774716}
+--- !u!114 &-5792381934088020876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4568608030959818081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5332116693572357767
 GameObject:
   m_ObjectHideFlags: 0

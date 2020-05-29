@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PetMovement : MonoBehaviour
 {
-    float speed = 0.5f;
+    int speed = 1;
     float rotationSpeed = 100f;
     private Inventory inventory;
+    private PetInfo info;
     private Item pet;
     private int range = 500;
     private int rotationDirection = 0;
@@ -17,17 +18,18 @@ public class PetMovement : MonoBehaviour
     private bool isRotatingLeft = false;
     private bool isRotatingRight = false;
     private bool isWalking = false;
+    private Vector3 oldPosition;
+    private Quaternion oldRotation;
     
 
     void Start()
     {
+        info = GetComponent<PetInfo>();
         inventory = GameObject.Find("Pet Manager").GetComponent<Inventory>();
         pet = inventory.CheckForItem(this.gameObject.name.Remove(this.gameObject.name.IndexOf("(Clone)"), 7));
-        if(pet != null)
-        {
-            //speed = pet.stats["Speed"];
-        }
+        info.TryGetStat("Speed", out speed);
     }
+    
 
     // Update is called once per frame
     void Update()
@@ -57,12 +59,23 @@ public class PetMovement : MonoBehaviour
 
         movementVector = GetWalkingSpeed();
 
-        this.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+        if(this.transform.rotation.eulerAngles + rotationVector != oldRotation.eulerAngles || this.transform.position + movementVector != oldPosition)
         {
-            this.GetComponent<ASL.ASLObject>().SendAndIncrementLocalRotation(Quaternion.Euler(rotationVector * Time.deltaTime));
-            this.GetComponent<ASL.ASLObject>().SendAndIncrementLocalPosition(movementVector * Time.deltaTime);
-            
-        });
+            this.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+            {
+                if(this.transform.rotation.eulerAngles + rotationVector != oldRotation.eulerAngles)
+                {
+                    this.GetComponent<ASL.ASLObject>().SendAndIncrementLocalRotation(Quaternion.Euler(rotationVector * Time.deltaTime));
+                }
+                if(this.transform.position + movementVector != oldPosition)
+                {
+                    this.GetComponent<ASL.ASLObject>().SendAndIncrementLocalPosition(movementVector * Time.deltaTime);
+                }
+            });
+        }
+        
+        oldPosition = this.transform.position;
+        oldRotation = this.transform.rotation;
     }
 
     private Vector3 GetWalkingSpeed()
@@ -73,12 +86,12 @@ public class PetMovement : MonoBehaviour
             {
                 if(pet.movement == "Aerial")
                 {
-                    return transform.forward * speed;
+                    return transform.forward * speed * 0.5f;
                 }
             }
             if(IsGrounded())
             {
-                return transform.forward * speed;
+                return transform.forward * speed * 0.5f;
             }
         }
         return Vector3.zero;

@@ -6,7 +6,6 @@ public class PetInfo : MonoBehaviour
 {
     public Inventory inventory;
     public Item itemRef;
-
     private void Awake()
     {
         // Get inventory
@@ -31,5 +30,10 @@ public class PetInfo : MonoBehaviour
     public Item GetItem()
     {
         return itemRef;
+    }
+
+    public bool TryGetStat(string statName, out int value)
+    {
+        return itemRef.stats.TryGetValue(statName, out value);
     }
 }

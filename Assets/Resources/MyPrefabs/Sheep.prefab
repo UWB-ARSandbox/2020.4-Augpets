@@ -163,9 +163,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4102152433692985630}
-  - component: {fileID: 8158169501099832565}
   - component: {fileID: 7150977572015224508}
   - component: {fileID: 1024880176390840244}
+  - component: {fileID: -812570410466224205}
   m_Layer: 9
   m_Name: Sheep
   m_TagString: Pet
@@ -189,18 +189,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8158169501099832565
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1060206558556764941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7150977572015224508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,6 +215,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.7455618, y: 4.9826655, z: 6.147757}
   m_Center: {x: -0.047632806, y: 1.9913312, z: 0.5155015}
+--- !u!114 &-812570410466224205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1060206558556764941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1264971413576223815
 GameObject:
   m_ObjectHideFlags: 0

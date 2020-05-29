@@ -1300,9 +1300,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5365733863722168666}
-  - component: {fileID: 6539879999925243384}
   - component: {fileID: 6353578144266717987}
   - component: {fileID: -8909315461738827685}
+  - component: {fileID: -6761784845712487223}
   m_Layer: 9
   m_Name: Apatosaurus
   m_TagString: Pet
@@ -1326,18 +1326,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6539879999925243384
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8948005249988641609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6353578144266717987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1364,6 +1352,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 5.8761754, y: 10.593713, z: 32.5317}
   m_Center: {x: 0.05174354, y: 4.796855, z: 7.1776075}
+--- !u!114 &-6761784845712487223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8948005249988641609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9137362650974462479
 GameObject:
   m_ObjectHideFlags: 0

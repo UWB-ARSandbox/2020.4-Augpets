@@ -288,9 +288,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3013507407330377113}
-  - component: {fileID: 7364148373336521177}
   - component: {fileID: 982810386740875563}
   - component: {fileID: 2747207409602462565}
+  - component: {fileID: -2103783578042503784}
   m_Layer: 9
   m_Name: Tyrannosaurus Rex
   m_TagString: Pet
@@ -314,18 +314,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7364148373336521177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2272480380294107018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &982810386740875563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,6 +340,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 8.638254, y: 11.557484, z: 17.175308}
   m_Center: {x: 0.10946543, y: 7.253946, z: 5.333868}
+--- !u!114 &-2103783578042503784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2272480380294107018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2319906758442241462
 GameObject:
   m_ObjectHideFlags: 0

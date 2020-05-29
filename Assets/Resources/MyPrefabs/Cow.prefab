@@ -715,9 +715,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2215417961024167561}
-  - component: {fileID: 6612421334066804118}
   - component: {fileID: -3445614670058839213}
   - component: {fileID: 4882317255574798646}
+  - component: {fileID: -7677538683380158611}
   m_Layer: 9
   m_Name: Cow
   m_TagString: Pet
@@ -741,18 +741,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6612421334066804118
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2947015781374454938}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-3445614670058839213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -779,6 +767,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.0759356, y: 5.7584467, z: 9.573312}
   m_Center: {x: -0.012248632, y: 2.3792229, z: 0.74153376}
+--- !u!114 &-7677538683380158611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2947015781374454938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3028172170995764700
 GameObject:
   m_ObjectHideFlags: 0

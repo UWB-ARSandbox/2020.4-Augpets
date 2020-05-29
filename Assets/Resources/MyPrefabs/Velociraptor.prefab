@@ -572,9 +572,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 507521779711272773}
-  - component: {fileID: 8114763471957682985}
   - component: {fileID: -6505263087382900419}
   - component: {fileID: 2085610873980094506}
+  - component: {fileID: 2318004722578287430}
   m_Layer: 9
   m_Name: Velociraptor
   m_TagString: Pet
@@ -598,18 +598,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8114763471957682985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3553425345206031702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-6505263087382900419
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -636,6 +624,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.6312547, y: 4.315164, z: 6.3204913}
   m_Center: {x: 0.0018559397, y: 2.5907478, z: 2.0469694}
+--- !u!114 &2318004722578287430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3553425345206031702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3640151272545812142
 GameObject:
   m_ObjectHideFlags: 0
