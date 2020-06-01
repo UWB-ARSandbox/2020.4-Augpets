@@ -25,5 +25,6 @@
 | <a href="https://www.flaticon.com/free-icon/eraser_2891541">Eraser icon</a> by Pixel perfect |
 | <a href="https://www.flaticon.com/free-icon/check_1828644">Check icon</a> by Pixel perfect |
 | <a href="https://www.flaticon.com/free-icon/remove_1828851">Remove icon</a> by Pixel perfect |
+| <a href="https://www.flaticon.com/free-icon/warning_595067">Warning icon</a> by Freepik |
 | <a href="https://www.dafont.com/riffic.font">Riffic Free Bold font</a> by Nini Prower</a> |
 | 3D Models by <a href="http://quaternius.com/">Quaternius</a> |
