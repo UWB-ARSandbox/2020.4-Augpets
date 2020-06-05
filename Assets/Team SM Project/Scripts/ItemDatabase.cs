@@ -9,7 +9,7 @@ public class ItemDatabase : MonoBehaviour
     public List<Item> items = new List<Item>();
 
     private string unnamed = "Unnamed";
-    private string owner;
+    private string owner = "N/A";
 
     private const string land = "Land";
     private const string aerial = "Aerial";
@@ -17,8 +17,30 @@ public class ItemDatabase : MonoBehaviour
 
     private void Awake()
     {
-        owner = ASL.GameLiftManager.GetInstance().m_Username;
+        if(ASL.GameLiftManager.GetInstance().AmLowestPeer())
+        {
+            gameObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+            {
+                float[] users = new float[ASL.GameLiftManager.GetInstance().m_Players.Count];
+                int i = 0;
+                foreach(KeyValuePair<int, string> entry in ASL.GameLiftManager.GetInstance().m_Players)
+                {
+                    users[i] = (float)entry.Key;
+                    i++;
+                }
+
+                gameObject.GetComponent<ASL.ASLObject>().SendFloatArray(users);
+            });
+        }
+        gameObject.GetComponent<ASL.ASLObject>()._LocallySetFloatCallback(SetOwner);
+
         BuildDatabase();
+    }
+
+    private void SetOwner(string _id, float[] f)
+    {
+        int peerID = (int)f[ASL.GameLiftManager.GetInstance().m_PeerId];
+        owner = ASL.GameLiftManager.GetInstance().m_Players[peerID];
     }
 
     public Item GetItem(int id)
