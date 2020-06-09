@@ -188,7 +188,7 @@ public class ARObjectInteraction : MonoBehaviour
             exerciseFill.color = barGradient.Evaluate(exerciseBar.normalizedValue);
             affectionFill.color = barGradient.Evaluate(affectionBar.normalizedValue);
             // Set owner
-            ownerText.text = "Owner: " + selectedItem.owner;
+            ownerText.text = "Owner: " + username;
         }
     }
 
@@ -254,6 +254,7 @@ public class ARObjectInteraction : MonoBehaviour
         {
             ASL.ASLHelper.InstanitateASLObject(prefabName, pos, Quaternion.identity);
             inventory.PlaceItem(inventory.GetItem(selectedSlot).id);
+
         }
     }
 
@@ -264,20 +265,20 @@ public class ARObjectInteraction : MonoBehaviour
             if(objectToPickup.GetComponent<PetInfo>() != null)
             {
                 // Only pickup if user is the owner
-                if(objectToPickup.GetComponent<PetInfo>().GetItem().owner == username)
-                {
+                //if(objectToPickup.GetComponent<PetInfo>().GetItem().owner == username)
+                //{
                     // Remove object and put back in inventory
                     inventory.PickupItem(inventory.CheckForItem(objectToPickup.GetComponent<PetInfo>().GetItem().type).id);
                     objectToPickup.gameObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
                     {
                         objectToPickup.gameObject.GetComponent<ASL.ASLObject>().DeleteObject();
                     });
-                }
+                //}
                 // Display notification to user
-                else
-                {
-                    NotifyUser("Cannot remove a pet you do not own.");
-                }
+                //else
+                //{
+                //    NotifyUser("Cannot remove a pet you do not own.");
+                //}
             }
         }
     }

@@ -9,15 +9,13 @@ public class ItemDatabase : MonoBehaviour
     public List<Item> items = new List<Item>();
 
     private string unnamed = "Unnamed";
-    private string owner;
 
     private const string land = "Land";
     private const string aerial = "Aerial";
     private const string aquatic = "Aquatic";
 
-    private void Awake()
+    void Awake()
     {
-        owner = ASL.GameLiftManager.GetInstance().m_Username;
         BuildDatabase();
     }
 
@@ -41,7 +39,7 @@ public class ItemDatabase : MonoBehaviour
         items = new List<Item>()
         {
             // Dog
-            new Item(0, "Dog", land, unnamed, owner, 
+            new Item(0, "Dog", land, unnamed, 
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -50,7 +48,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 2}
             }),
             // Cat
-            new Item(1, "Cat", land, unnamed, owner,
+            new Item(1, "Cat", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -59,7 +57,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 2}
             }),
             // Wolf
-            new Item(2, "Wolf", land, unnamed, owner,
+            new Item(2, "Wolf", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 5 },
@@ -68,7 +66,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 2}
             }),
             // Eagle
-            new Item(3, "Eagle", aerial, unnamed, owner,
+            new Item(3, "Eagle", aerial, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -77,7 +75,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 3}
             }),
             // Cow
-            new Item(4, "Cow", land, unnamed, owner,
+            new Item(4, "Cow", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -86,7 +84,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 1}
             }),
             // Pig
-            new Item(5, "Pig", land, unnamed, owner,
+            new Item(5, "Pig", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 1 },
@@ -95,7 +93,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 1}
             }),
             // Horse
-            new Item(6, "Horse", land, unnamed, owner,
+            new Item(6, "Horse", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -104,7 +102,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 5}
             }),
             // Sheep
-            new Item(7, "Sheep", land, unnamed, owner,
+            new Item(7, "Sheep", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 0 },
@@ -113,7 +111,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 2}
             }),
             // Baby Dragon
-            new Item(8, "Baby Dragon", aerial, unnamed, owner,
+            new Item(8, "Baby Dragon", aerial, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -122,7 +120,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 4}
             }),
             // Velociraptor
-            new Item(9, "Velociraptor", land, unnamed, owner,
+            new Item(9, "Velociraptor", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -131,7 +129,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 4}
             }),
             // Tyrannosaurus Rex
-            new Item(10, "Tyrannosaurus Rex", land, unnamed, owner,
+            new Item(10, "Tyrannosaurus Rex", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -140,7 +138,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 2}
             }),
             // Stegosaurus
-            new Item(11, "Stegosaurus", land, unnamed, owner,
+            new Item(11, "Stegosaurus", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -149,7 +147,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 1}
             }),
             // Triceratops
-            new Item(12, "Triceratops", land, unnamed, owner,
+            new Item(12, "Triceratops", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -158,7 +156,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 1}
             }),
             // Apatosaurus
-            new Item(13, "Apatosaurus", land, unnamed, owner,
+            new Item(13, "Apatosaurus", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },
@@ -167,7 +165,7 @@ public class ItemDatabase : MonoBehaviour
                 {"Speed", 1}
             }), 
             // Parasaurolophus
-            new Item(14, "Parasaurolophus", land, unnamed, owner,
+            new Item(14, "Parasaurolophus", land, unnamed,
             new Dictionary<string, int>
             {
                 {"Food", 10 },

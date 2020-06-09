@@ -574,7 +574,7 @@ GameObject:
   - component: {fileID: 507521779711272773}
   - component: {fileID: -6505263087382900419}
   - component: {fileID: 2085610873980094506}
-  - component: {fileID: 2318004722578287430}
+  - component: {fileID: -7484737229780361056}
   m_Layer: 9
   m_Name: Velociraptor
   m_TagString: Pet
@@ -624,7 +624,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.6312547, y: 4.315164, z: 6.3204913}
   m_Center: {x: 0.0018559397, y: 2.5907478, z: 2.0469694}
---- !u!114 &2318004722578287430
+--- !u!114 &-7484737229780361056
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -633,9 +633,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 3553425345206031702}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Script: {fileID: 11500000, guid: 735b29d171fe695448c0f5f234ba8a39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isWandering: 0
+  isJumping: 0
+  isIdle: 0
+  wanderTime: 0
+  movementSpeed: 0
+  viewLength: 10
+  floorBelow: 0
+  floorInFront: 0
+  platformAbove: 0
+  platformBelow: 0
+  maxMovementTime: 3
+  maxPauseTime: 4
+  platformAbovePosition: {x: 0, y: 0, z: 0}
+  currentMovementType: 0
 --- !u!1 &3640151272545812142
 GameObject:
   m_ObjectHideFlags: 0

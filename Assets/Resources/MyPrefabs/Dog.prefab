@@ -301,8 +301,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3486141733017270432}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -0.20131046, y: 0, z: -0.30944842}
+  m_LocalRotation: {x: -0.50865006, y: 0.49119768, z: 0.50865006, w: 0.49119768}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 121.5001, y: 121.5001, z: 121.5001}
   m_Children:
   - {fileID: 2814472197004781006}
@@ -312,7 +312,7 @@ Transform:
   - {fileID: 8034001145481479365}
   m_Father: {fileID: 748017817893635324}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -92, y: 90, z: 0}
 --- !u!1 &3629060784505699472
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,7 +450,7 @@ GameObject:
   - component: {fileID: 748017817893635324}
   - component: {fileID: -1721270212832155106}
   - component: {fileID: 2177217622437830189}
-  - component: {fileID: -2267737120554107977}
+  - component: {fileID: 7446041568086054787}
   m_Layer: 9
   m_Name: Dog
   m_TagString: Pet
@@ -498,9 +498,9 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 8.196654, y: 4.9507055, z: 2.716428}
-  m_Center: {x: -0.09482951, y: 1.9753517, z: -0.25935385}
---- !u!114 &-2267737120554107977
+  m_Size: {x: 2.926709, y: 5.1290545, z: 6.1770587}
+  m_Center: {x: -0.071164414, y: 2.0645268, z: 0.2193543}
+--- !u!114 &7446041568086054787
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -509,9 +509,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 4339825063724349167}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Script: {fileID: 11500000, guid: 735b29d171fe695448c0f5f234ba8a39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isWandering: 0
+  isJumping: 0
+  isIdle: 0
+  wanderTime: 0
+  movementSpeed: 0
+  viewLength: 10
+  floorBelow: 0
+  floorInFront: 0
+  platformAbove: 0
+  platformBelow: 0
+  maxMovementTime: 3
+  maxPauseTime: 4
+  platformAbovePosition: {x: 0, y: 0, z: 0}
+  currentMovementType: 0
 --- !u!1 &4768020045093086122
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,7 +794,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6041893677500235987}
   m_LocalRotation: {x: 0.7071068, y: 0.000000053385076, z: 0.70710677, w: -0.00000005338508}
-  m_LocalPosition: {x: -0, y: 1.9581753, z: -0.3344834}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_Children: []
   m_Father: {fileID: 748017817893635324}

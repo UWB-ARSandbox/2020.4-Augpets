@@ -9,12 +9,15 @@ public class PetMovement_new : MonoBehaviour
     private ARObjectInteraction interaction;
     private bool isSelected;
     private Vector3 lastPosition;
+    private Vector3 initalJumpPosition;
+    private Vector3 initialFallPosition;
     private Quaternion lastRotation;
     private Vector3 nextPosition;
     private Quaternion nextRotation;
     public enum MovementType
     {
         Wander,
+        Rotate,
         Jump,
         Fall,
         Idle
@@ -24,26 +27,30 @@ public class PetMovement_new : MonoBehaviour
     public bool isJumping;
     public bool isIdle;
     public float wanderTime;
+    public float pauseTime;
     public int movementSpeed;
-    public float viewLength = 10.0F;
+    public float viewLength = 8.0F;
     public bool floorBelow = false;
     public bool floorInFront = false;
+    public bool jumpablePlatformAbove = false;
     public bool platformAbove = false;
     public bool platformBelow = false;
+    public bool canJump = false;
+    public bool canFall = false;
 
     public float maxMovementTime = 3.0F;
     public float maxPauseTime = 4.0F;
 
-    public Vector3 platformAbovePosition;
+    public Vector3 jumpEndPosition;
+    public Vector3 midJumpPosition;
+
+    public Vector3 fallEndPosition;
+    public Vector3 midFallPosition;
     public MovementType currentMovementType;
-    private Coroutine currentCoroutine;
+    private float speedMultiplier = 0.25F;
 
     void Start()
     {
-        lastPosition = this.transform.position;
-        lastRotation = this.transform.rotation;
-        nextPosition = lastPosition;
-        nextRotation = lastRotation;
         info = this.GetComponent<PetInfo>();
         currentMovementType = MovementType.Idle;
         info.TryGetStat("Speed", out movementSpeed);
@@ -53,163 +60,157 @@ public class PetMovement_new : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        DetectSurfaces();
-        if(currentMovementType == MovementType.Idle)
+        if(!ASL.GameLiftManager.GetInstance().AmLowestPeer())
         {
-            if(floorBelow)
-            {
-                currentMovementType = MovementType.Wander;
-            }
-            if(platformAbove)
-            {
-                currentMovementType = MovementType.Jump;
-            }
+            return;
+        }
+
+        if(currentMovementType == MovementType.Idle || currentMovementType == MovementType.Wander)
+        {
+            DetectSurfaces();
         }
         if(interaction.selectedObject == this.gameObject)
         {
-            StopCoroutine(currentCoroutine);
-            isWandering = false;
             nextPosition = this.transform.position;
-            isSelected = true;
         }
         else
         {
-            isSelected = false;
+            if(canJump && currentMovementType != MovementType.Jump && currentMovementType != MovementType.Fall)
+            {
+                initalJumpPosition = this.transform.position;
+                currentMovementType = MovementType.Jump;
+            } 
+            /*if(canFall && currentMovementType != MovementType.Fall && currentMovementType != MovementType.Jump)
+            {
+                initialFallPosition = this.transform.position;
+                currentMovementType = MovementType.Fall;
+            }*/
             switch(currentMovementType)
             {
                 case MovementType.Wander: 
-                    if(!isWandering)
+
+                    if(floorBelow)
                     {
-                        currentCoroutine = StartCoroutine(Wander());
+                        if(floorInFront)
+                        {
+                            if(wanderTime > 0)
+                            {
+                                nextPosition = this.transform.position + (this.transform.forward * speedMultiplier * movementSpeed * Time.deltaTime);
+                                wanderTime -= Time.deltaTime;
+                            }
+                            else
+                            {
+                                
+                                pauseTime = Random.Range(0, maxPauseTime);
+                                currentMovementType = MovementType.Idle;
+                            }
+                        }
+                        else
+                        {
+                            Rotate(Random.Range(0, 360));
+                            nextPosition = this.transform.position;
+                        }
+                    }
+                    else
+                    {
+                        nextPosition = this.transform.position;
+                    }
+                    
+                    break;
+
+                case MovementType.Idle:
+                    if(pauseTime > 0)
+                    {
+                        pauseTime -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        wanderTime = Random.Range(0, maxMovementTime);
+                        Rotate(Random.Range(0, 360));
+                        currentMovementType = MovementType.Wander;
+
                     }
                     break;
+
                 case MovementType.Jump:
-                    if(!isJumping)
+                    if(this.transform.position == initalJumpPosition)
                     {
-                        //StartCoroutine(Jump(this.transform.position, platformAbovePosition));
+                        LeanTween.move(this.gameObject, midJumpPosition, 0.5F);
+                    }
+                    else if(this.transform.position == midJumpPosition)
+                    {
+                        LeanTween.move(this.gameObject, jumpEndPosition, 0.5F);
+                    }
+                    else if(this.transform.position == jumpEndPosition)
+                    {
+                        nextPosition = this.transform.position;
+                        currentMovementType = MovementType.Idle;
                     }
                     break;
-                case MovementType.Fall: break;
-                case MovementType.Idle: break;
+                case MovementType.Fall:
+                    if(this.transform.position == initialFallPosition)
+                    {
+                        LeanTween.move(this.gameObject, midFallPosition, 0.5F);
+                    }
+                    else if(this.transform.position == midFallPosition)
+                    {
+                        LeanTween.move(this.gameObject, fallEndPosition, 0.5F);
+                    }
+                    else if(this.transform.position == fallEndPosition)
+                    {
+                        nextPosition = this.transform.position;
+                        currentMovementType = MovementType.Idle;
+                    }
+                    break;
+                case MovementType.Rotate:
+                    
+                    break;
+                
                 default: break;
             }
-            UpdatePosition();
         }
-        
+        UpdatePosition();
+        lastPosition = this.transform.position;
     }
 
 
-    IEnumerator Wander()
+    private void Rotate(float degrees)
     {
-        isWandering = true;
-        while(wanderTime > 0 && currentMovementType == MovementType.Wander)
-        {
-            nextPosition = lastPosition + (this.transform.forward * movementSpeed * Time.deltaTime);
-            wanderTime -= Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-        yield return new WaitForSeconds(Random.Range(0.0F, maxPauseTime));
-        wanderTime = Random.Range(0.0F, maxMovementTime);
-        Rotate();
-        
+        nextRotation = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y + degrees, this.transform.rotation.z);
+        nextPosition = this.transform.position;
     }
 
-    private void Rotate()
-    {
-        if(!floorInFront)
-        {
-            nextRotation = Quaternion.Euler(lastRotation.x, lastRotation.y + 180, lastRotation.z);
-        }
-        else
-        {
-            nextRotation = Quaternion.Euler(0.0F, Random.Range(0, 360), 0.0F);
-        }
-        
-        this.currentMovementType = MovementType.Idle;
-        isWandering = false;
-    }
-
-    // Not yet fully functioning
-    /*
-    IEnumerator Jump(Vector3 startPosition, Vector3 endPosition)
-    {
-        isJumping = true;
-        float arcAmount = 8f;
-        float heightOfShot = (platformAbovePosition.y - this.transform.position.y) + 3;
-        Vector3 newVel = new Vector3();
-        // Find the direction vector without the y-component
-        Vector3 direction = new Vector3(endPosition.x, 0f, endPosition.z) - new Vector3(startPosition.x, 0f, startPosition.z);
-        // Find the distance between the two points (without the y-component)
-        float range = direction.magnitude;
- 
-        // Find unit direction of motion without the y component
-        Vector3 unitDirection = direction.normalized;
-        // Find the max height
-   
-        float maxYPos = startPosition.y + heightOfShot;
-   
-        // if it has, switch the height to match a 45 degree launch angle
-        if (range / 2f > maxYPos)
-            maxYPos = range / arcAmount;
-        //fix bug when shooting on tower
-        if (maxYPos - startPosition.y <= 0)
-        {
-            maxYPos = startPosition.y + 2f;
-        }
-        //fix bug caused if we can't shoot higher than target
-        if (maxYPos - endPosition.y <= 0)
-        {
-            maxYPos = endPosition.y + 2f;
-        }
-        // find the initial velocity in y direction
-        newVel.y = Mathf.Sqrt(-2.0f * Physics.gravity.y * (maxYPos - startPosition.y));
-        // find the total time by adding up the parts of the trajectory
-        // time to reach the max
-        float timeToMax = Mathf.Sqrt(-2.0f * (maxYPos - startPosition.y) / Physics.gravity.y);
-        // time to return to y-target
-        float timeToTargetY = Mathf.Sqrt(-2.0f * (maxYPos - endPosition.y) / Physics.gravity.y);
-        // add them up to find the total flight time
-        float totalFlightTime = timeToMax + timeToTargetY;
-        // find the magnitude of the initial velocity in the xz direction
-        float horizontalVelocityMagnitude = range / totalFlightTime;
-        // use the unit direction to find the x and z components of initial velocity
-        newVel.x = horizontalVelocityMagnitude * unitDirection.x;
-        newVel.z = horizontalVelocityMagnitude * unitDirection.z;
-   
-        float elapse_time = 0;
-        while (elapse_time < totalFlightTime)
-        {
-            this.transform.Translate(newVel.x * Time.deltaTime, (newVel.y - (Physics.gravity.y * elapse_time)) * Time.deltaTime, newVel.z * Time.deltaTime);
-            elapse_time += Time.deltaTime;
-            yield return null;
-        }
-        isJumping = false;
-        currentMovementType = MovementType.Idle;
-    }
-    */
     private void DetectSurfaces()
     {
-        float petHeight = this.GetComponent<Collider>().bounds.size.y / 2;
-        float petWidth = this.GetComponent<Collider>().bounds.size.x / 2;
-        Vector3 floorBelow = new Vector3(transform.position.x, transform.position.y - (petHeight + 1F), transform.position.z);
-        Vector3 floorInFront = new Vector3(transform.position.x, transform.position.y - (petHeight + 1F), transform.position.z + transform.forward.z * (petWidth + 0.1F));
-        Vector3 platformAbove = new Vector3(transform.position.x, transform.position.y + viewLength, transform.position.z + ((transform.forward * movementSpeed * viewLength).z));
-        Vector3 platformBelow = new Vector3(transform.position.x, transform.position.y - viewLength, transform.position.z + ((transform.forward * movementSpeed * viewLength).z));
+        float petHeight = this.GetComponent<Collider>().bounds.size.y;
+        float petWidth = this.GetComponent<Collider>().bounds.size.z;
+        Vector3 petPosition = this.transform.position + new Vector3(0, petHeight / 2, 0);
+        Vector3 floorBelow = petPosition + new Vector3(0, -((petHeight / 2) + 0.01F), 0);
+        Vector3 floorInFront = floorBelow + (this.transform.forward * (petWidth / 2));
+        Vector3 jumpablePlatformAbove = petPosition + (this.transform.forward * (petWidth / 3)) + new Vector3(0, petHeight * viewLength, 0);
+        Vector3 platformAbove = petPosition + new Vector3(0, petHeight * viewLength, 0);
+        Vector3 platformBelowStart = this.transform.position + this.transform.forward * ((petWidth / 2) + 0.25F) - new Vector3(0, 0.1F, 0);
+        Vector3 platformBelowEnd = platformBelowStart + new Vector3(0, -viewLength, 0);
+
+        GameObject jumpablePlatform = null;
+        GameObject abovePlatform = null;
+        GameObject floor = null;
+        GameObject belowPlatform = null;
+
 
 
         int layerMask = 1 << LayerMask.NameToLayer("Platform");
         RaycastHit hit;
-        Transform floor = null;
 
-        
-        if (Physics.Linecast(transform.position, floorBelow, out hit, layerMask))
+        Debug.DrawLine(petPosition, floorBelow, Color.green);
+        if (Physics.Linecast(petPosition, floorBelow, out hit, layerMask))
         {
             if (hit.collider != null)
             {
                 if(hit.collider.gameObject.name.Contains("PlatformPlane"))
                 {
                     this.floorBelow = true;
-                    floor = hit.collider.transform;
+                    floor = hit.collider.gameObject;
                 }
                 
             }
@@ -221,54 +222,110 @@ public class PetMovement_new : MonoBehaviour
             //StopCoroutine("Wander");
         }
 
-        if(Physics.Linecast(transform.position, floorInFront, out hit, layerMask))
+        Debug.DrawLine(petPosition, floorInFront, Color.green);
+        if(Physics.Linecast(petPosition, floorInFront, out hit, layerMask))
         {
             if (hit.collider != null)
             {
                 if(hit.collider.gameObject.name.Contains("PlatformPlane"))
                 {
                     this.floorInFront = true;
-                    floor = hit.collider.transform;
                 }
             }
         }
         else
         {
             this.floorInFront = false;
-            StopCoroutine(currentCoroutine);
             isWandering = false;
             this.nextPosition = new Vector3(lastPosition.x, lastPosition.y, lastPosition.z + -this.transform.forward.z * Time.deltaTime * movementSpeed);
         }
         
-
         
-        /*if(Physics.Linecast(platformAbove, transform.position, out hit, layerMask))
+        Debug.DrawLine(jumpablePlatformAbove, petPosition, Color.green);
+        if(Physics.Linecast(jumpablePlatformAbove, petPosition, out hit, layerMask))
         {
-            if(hit.collider != null && (floor != null && hit.collider.transform != floor) && hit.collider.transform.position.y > this.transform.position)
+            if(hit.collider != null && (floor != null && hit.collider.transform != floor))
             {
                 if(hit.collider.gameObject.name.Contains("PlatformPlane"))
                 {
-                    this.platformAbove = true;
-                    platformAbovePosition = hit.point;
+                    this.jumpablePlatformAbove = true;
+                    midJumpPosition = new Vector3(petPosition.x, hit.point.y, petPosition.z);
+                    jumpEndPosition = hit.point;
+                    jumpablePlatform = hit.collider.gameObject;
                 }
                 else
                 {
-                    this.platformAbove = false;
+                    this.jumpablePlatformAbove = false;
                 }
             }
-        }*/
+            else
+            {
+                this.jumpablePlatformAbove = false;
+            }
+        }
+        else
+        {
+            this.jumpablePlatformAbove = false;
+        }
 
-        // Currently can't check for a platform to jump down to.
-        /*if(Physics.Linecast(transform.position, platformBelow, out hit, layerMask))
+        Debug.DrawLine(platformAbove, petPosition, Color.green);
+        if(Physics.Linecast(platformAbove, petPosition, out hit, layerMask))
         {
             if(hit.collider != null)
             {
                 if(hit.collider.gameObject.name.Contains("PlatformPlane"))
                 {
                     this.platformAbove = true;
+                    abovePlatform = hit.collider.gameObject;
+                }
+                else
+                {
+                    this.platformAbove = false;
                 }
             }
-        }*/
+            else
+            {
+                this.platformAbove = false;
+            }
+        }
+        else
+        {
+            this.platformAbove = false;
+        }
+
+        this.canJump = jumpablePlatform && (abovePlatform != jumpablePlatform);
+
+        Debug.DrawLine(platformBelowStart, platformBelowEnd, Color.green);
+        if(Physics.Linecast(platformBelowStart, platformBelowEnd, out hit, layerMask))
+        {
+            if(hit.collider != null)
+            {
+                if(hit.collider.gameObject.name.Contains("PlatformPlane"))
+                {
+                    if(!hit.collider.gameObject == floor)
+                    {
+                        this.platformBelow = true;
+                        belowPlatform = hit.collider.gameObject;
+                        midFallPosition = new Vector3(hit.point.x, this.transform.position.y, hit.point.z);
+                        fallEndPosition = hit.point;
+                    }
+                    else
+                    {
+                        this.platformBelow = false;
+                    }
+                }
+                else
+                {
+                    this.platformBelow = false;
+                }
+            }
+            else
+            {
+                this.platformBelow = false;
+            }
+        }
+
+        this.canFall = belowPlatform && (belowPlatform != floor);
 
     }
 
@@ -276,13 +333,16 @@ public class PetMovement_new : MonoBehaviour
     {
         this.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
         {
-            this.GetComponent<ASL.ASLObject>().SendAndSetWorldRotation(nextRotation);
-
-            if(lastPosition != nextPosition)
+            if(this.transform.rotation != nextRotation)
+            {
+                this.GetComponent<ASL.ASLObject>().SendAndSetWorldRotation(nextRotation);
+            }
+            
+            if(nextPosition != lastPosition)
             {
                 this.GetComponent<ASL.ASLObject>().SendAndSetWorldPosition(nextPosition);
             }
+            
         });
-        lastPosition = nextPosition;
     }
 }

@@ -16,14 +16,9 @@ public class PetInfo : MonoBehaviour
     {
         if(gameObject.name.Contains("(Clone)"))
         {
-            // Display name of selected object
+            // Get reference to item and store in object
             string type = gameObject.name.Remove(gameObject.name.IndexOf("(Clone)"), 7);
-            Item temp = inventory.CheckForItem(type);
-            // Only save as item if this item is owned by the user
-            if(temp.owner == ASL.GameLiftManager.GetInstance().m_Username)
-            {
-                itemRef = temp;
-            }
+            itemRef = inventory.CheckForItem(type);
         }
     } 
 

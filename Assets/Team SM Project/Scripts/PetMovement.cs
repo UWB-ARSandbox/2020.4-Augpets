@@ -29,7 +29,7 @@ public class PetMovement : MonoBehaviour
         pet = inventory.CheckForItem(this.gameObject.name.Remove(this.gameObject.name.IndexOf("(Clone)"), 7));
         info.TryGetStat("Speed", out speed);
     }
-    
+
 
     // Update is called once per frame
     void Update()
@@ -86,12 +86,12 @@ public class PetMovement : MonoBehaviour
             {
                 if(pet.movement == "Aerial")
                 {
-                    return transform.forward * speed * 0.5f;
+                    return 0.25f * transform.forward * (float)speed; 
                 }
             }
             if(IsGrounded())
             {
-                return transform.forward * speed * 0.5f;
+                return transform.forward * (float)speed * 0.25f;
             }
         }
         return Vector3.zero;
@@ -130,10 +130,6 @@ public class PetMovement : MonoBehaviour
         int walkTime = Random.Range(1, 2);
         isWandering = true;
 
-        yield return new WaitForSeconds(walkWait);
-        isWalking = true;
-        yield return new WaitForSeconds(walkTime);
-        isWalking = false;
         yield return new WaitForSeconds(rotationWait);
         if(rotationDirection == 1)
         {
@@ -144,6 +140,11 @@ public class PetMovement : MonoBehaviour
             isRotatingLeft = true;
         }
         yield return new WaitForSeconds(rotationTime);
+        yield return new WaitForSeconds(walkWait);
+        isWalking = true;
+        yield return new WaitForSeconds(walkTime);
+        isWalking = false;
+        
         isRotatingLeft = false;
         isRotatingRight = false;
 

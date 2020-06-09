@@ -604,7 +604,7 @@ GameObject:
   - component: {fileID: 1876740700594197573}
   - component: {fileID: 5810745863466227476}
   - component: {fileID: 8049014177240697180}
-  - component: {fileID: -2340407034443487072}
+  - component: {fileID: 4031750236513813763}
   m_Layer: 9
   m_Name: Horse
   m_TagString: Pet
@@ -654,7 +654,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.3563662, y: 7.537105, z: 9.671863}
   m_Center: {x: 0.018603232, y: 3.268552, z: 0.65376216}
---- !u!114 &-2340407034443487072
+--- !u!114 &4031750236513813763
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -663,9 +663,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 3193294447760221782}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Script: {fileID: 11500000, guid: 735b29d171fe695448c0f5f234ba8a39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isWandering: 0
+  isJumping: 0
+  isIdle: 0
+  wanderTime: 0
+  movementSpeed: 0
+  viewLength: 10
+  floorBelow: 0
+  floorInFront: 0
+  platformAbove: 0
+  platformBelow: 0
+  maxMovementTime: 3
+  maxPauseTime: 4
+  platformAbovePosition: {x: 0, y: 0, z: 0}
+  currentMovementType: 0
 --- !u!1 &3365035370367403792
 GameObject:
   m_ObjectHideFlags: 0

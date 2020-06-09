@@ -531,7 +531,7 @@ GameObject:
   - component: {fileID: 8126229692870530060}
   - component: {fileID: -4974505930054951980}
   - component: {fileID: 6621433858450416186}
-  - component: {fileID: -6631496170155735270}
+  - component: {fileID: 4646174381517020307}
   m_Layer: 9
   m_Name: Triceratops
   m_TagString: Pet
@@ -581,7 +581,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 6.7545924, y: 8.893164, z: 12.980106}
   m_Center: {x: 0.18251342, y: 3.9465792, z: 1.375156}
---- !u!114 &-6631496170155735270
+--- !u!114 &4646174381517020307
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -590,9 +590,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 5088349602958108191}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd87066205cc04a4b9e89ccd68dc6556, type: 3}
+  m_Script: {fileID: 11500000, guid: 735b29d171fe695448c0f5f234ba8a39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isWandering: 0
+  isJumping: 0
+  isIdle: 0
+  wanderTime: 0
+  movementSpeed: 0
+  viewLength: 10
+  floorBelow: 0
+  floorInFront: 0
+  platformAbove: 0
+  platformBelow: 0
+  maxMovementTime: 3
+  maxPauseTime: 4
+  platformAbovePosition: {x: 0, y: 0, z: 0}
+  currentMovementType: 0
 --- !u!1 &5452931368702767820
 GameObject:
   m_ObjectHideFlags: 0
