@@ -6,6 +6,7 @@ public class PetInfo : MonoBehaviour
 {
     public Inventory inventory;
     public Item itemRef;
+    public string owner = "N/A";
     private void Awake()
     {
         // Get inventory

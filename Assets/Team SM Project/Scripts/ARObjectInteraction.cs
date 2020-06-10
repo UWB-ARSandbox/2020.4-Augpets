@@ -12,6 +12,7 @@ public class ARObjectInteraction : MonoBehaviour
     private GameObject _arSessionOrigin;
 
     public GameObject selectedObject;  // selected object
+    public static GameObject placedObject;
 
     private Vector2 touchPosition;
 
@@ -188,7 +189,19 @@ public class ARObjectInteraction : MonoBehaviour
             exerciseFill.color = barGradient.Evaluate(exerciseBar.normalizedValue);
             affectionFill.color = barGradient.Evaluate(affectionBar.normalizedValue);
             // Set owner
-            ownerText.text = "Owner: " + username;
+            if(selectedObject == null)
+            {
+                // Pet in inventory, owner is current user
+                ownerText.text = "Owner: " + username;
+            }
+            else
+            {
+                if(selectedObject.GetComponent<PetInfo>() != null)
+                {
+                    // Pet is from another user, retrieve from Pet Info
+                    ownerText.text = "Owner: " + selectedObject.GetComponent<PetInfo>().owner; 
+                }
+            }
         }
     }
 
@@ -252,9 +265,43 @@ public class ARObjectInteraction : MonoBehaviour
     {
         if(!inventory.GetItem(selectedSlot).placed)
         {
-            ASL.ASLHelper.InstanitateASLObject(prefabName, pos, Quaternion.identity);
+            ASL.ASLHelper.InstanitateASLObject(prefabName, pos, Quaternion.identity, string.Empty, string.Empty, OnObjectCreated, ClaimRejected, ReceiveOwner);
             inventory.PlaceItem(inventory.GetItem(selectedSlot).id);
+        }
+    }
 
+    public static void OnObjectCreated(GameObject _myGameObject)
+    {
+        // Sets the internal reference to the object
+        placedObject = _myGameObject;
+    
+        placedObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
+        {
+            float[] myValue = new float[1];
+            myValue[0] = 10f + ASL.GameLiftManager.GetInstance().m_PeerId;
+            placedObject.GetComponent<ASL.ASLObject>().SendFloatArray(myValue);
+            placedObject.GetComponent<PetInfo>().owner = ASL.GameLiftManager.GetInstance().m_Username;
+        });
+    }
+
+    public static void ClaimRejected(string _id, int _cancelledCallbacks)
+    {
+        Debug.Log("ASL Claim Rejected.");
+    }
+
+    public static void ReceiveOwner(string _id, float[] _floats)
+    {
+        // Stores a temp reference the the ASL Object script in a player
+        ASL.ASLObject temp;
+
+        // Gets the player matching the id of the player that called the send floats function
+        ASL.ASLHelper.m_ASLObjects.TryGetValue(_id, out temp);
+        if(_floats[0]>=10f)
+        {
+            int peerID = (int)_floats[0] - 10;
+            string playerUsername = ASL.GameLiftManager.GetInstance().m_Players[peerID];
+
+            temp.GetComponent<PetInfo>().owner = playerUsername;
         }
     }
 
@@ -265,20 +312,20 @@ public class ARObjectInteraction : MonoBehaviour
             if(objectToPickup.GetComponent<PetInfo>() != null)
             {
                 // Only pickup if user is the owner
-                //if(objectToPickup.GetComponent<PetInfo>().GetItem().owner == username)
-                //{
+                if(objectToPickup.GetComponent<PetInfo>().owner == username)
+                {
                     // Remove object and put back in inventory
                     inventory.PickupItem(inventory.CheckForItem(objectToPickup.GetComponent<PetInfo>().GetItem().type).id);
                     objectToPickup.gameObject.GetComponent<ASL.ASLObject>().SendAndSetClaim(() =>
                     {
                         objectToPickup.gameObject.GetComponent<ASL.ASLObject>().DeleteObject();
                     });
-                //}
+                }
                 // Display notification to user
-                //else
-                //{
-                //    NotifyUser("Cannot remove a pet you do not own.");
-                //}
+                else
+                {
+                    NotifyUser("Cannot remove a pet you do not own.");
+                }
             }
         }
     }
