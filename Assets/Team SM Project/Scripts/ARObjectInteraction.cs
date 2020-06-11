@@ -57,7 +57,7 @@ public class ARObjectInteraction : MonoBehaviour
     private int selectedSlot = 0;        // selected slot
     public Item selectedItem;           // item in selected slot
 
-    private string username;
+    public string username;
     public Text selectedObjectDisplay;
     public Text selectedNameDisplay;
     public Image selectedSlotDisplay;
@@ -226,6 +226,7 @@ public class ARObjectInteraction : MonoBehaviour
 
     private void SelectSlot(int slot)
     {
+
         DeselectObject();
         // Set slot to 0 if negative
         if(slot < 0)
@@ -413,7 +414,10 @@ public class ARObjectInteraction : MonoBehaviour
                             // Select Object - No Object Selected
                             if (selectedObject == null)
                             {
-                                SelectObject(hitObject.collider.gameObject);
+                                if(hitObject.collider.GetComponent<PetInfo>().owner == username)
+                                {
+                                    SelectObject(hitObject.collider.gameObject);
+                                }
                             }
                         }
                         // Pickup Mode
